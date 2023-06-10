@@ -1,0 +1,155 @@
+﻿@using CasseroleX.Application.Login.Commands;
+@model AdminLoginCommand
+@inject IOptionsSnapshot<AppOptions> app
+@inject ISiteConfigurationService _sysConfigService  
+@{
+    Layout = null;
+    var account = await _sysConfigService.GetConfiguration<AccountConfigInfo>();
+
+} 
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <partial name="_Meta">
+
+    <style type="text/css">
+        body {
+            color: #999;
+            background-color: #f1f4fd;
+            background-size: cover;
+        }
+
+        a {
+            color: #444;
+        }
+
+
+        .login-screen {
+            max-width: 430px;
+            padding: 0;
+            margin: 100px auto 0 auto;
+
+        }
+
+        .login-screen .well {
+            border-radius: 3px;
+            -webkit-box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 1);
+            border: none;
+            overflow: hidden;
+            padding: 0;
+        }
+
+        @@media (max-width: 767px) {
+            .login-screen {
+                padding: 0 20px;
+            }
+        }
+
+        .profile-img-card {
+            width: 100px;
+            height: 100px;
+            display: block;
+            -moz-border-radius: 50%;
+            -webkit-border-radius: 50%;
+            border-radius: 50%;
+            margin: -93px auto 30px;
+            border: 5px solid #fff;
+        }
+
+        .profile-name-card {
+            text-align: center;
+        }
+
+        .login-head {
+            background: #899fe1;
+        }
+
+        .login-form {
+            padding: 40px 30px;
+            position: relative;
+            z-index: 99;
+        }
+
+        #login-form {
+            margin-top: 20px;
+        }
+
+        #login-form .input-group {
+            margin-bottom: 15px;
+        }
+
+        #login-form .form-control {
+            font-size: 13px;
+        }
+
+    </style>
+    <!--@@formatter:off-->
+    @if(!string.IsNullOrEmpty(app.Value.LoginBackground))
+    {
+        <style type="text/css">
+            body{
+                background-image: url(@(app.Value.LoginBackground));
+            }
+        </style>
+    }  
+    <!--@@formatter:on-->
+</head>
+<body>
+    <div class="container">
+    <div class="login-wrapper">
+        <div class="login-screen">
+            <div class="well">
+                <div class="login-head">
+                    <img src="@(app.Value.CDN)/assets/img/login-head.png" style="width:100%;"/>
+                </div>
+                <div class="login-form">
+                    <img id="profile-img" class="profile-img-card" src="@(app.Value.CDN)/assets/img/avatar.png"/>
+                    <p id="profile-name" class="profile-name-card"></p>
+
+                    <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" id="login-form">
+                        <!--@@AdminLoginFormBegin-->
+                        <div id="errtips" class="hide"></div>
+                            @*@Html.AntiForgeryToken() //mvc form自带AntiForgeryToken*@
+                        <div class="input-group">
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
+                            <input type="text" class="form-control" id="pd-form-username" placeholder="用户名" name="username" autocomplete="off" value="" data-rule="用户名:required;username"/>
+                        </div>
+
+                        <div class="input-group">
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></div>
+                            <input type="password" class="form-control" id="pd-form-password" placeholder="密码" name="password" autocomplete="off" value="" data-rule="密码:required;password"/>
+                        </div>
+                        <!--@@CaptchaBegin-->
+                        @if (account is not null && account.LoginCaptcha)
+                        {
+                                <div class="input-group">
+                                    <div class="input-group-addon"><span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span></div>
+                                    <input type="text" name="captcha" class="form-control" placeholder="验证码" data-rule="required;length(4)" autocomplete="off" />
+                                    <span class="input-group-addon" style="padding:0;border:none;cursor:pointer;">
+                                        <img src="/Account/Captcha" width="100" height="30" onclick="this.src = '/Account/Captcha?r=' + Math.random();" />
+                                    </span>
+                                </div>
+                         }    
+                        <!--@@CaptchaEnd-->
+                        <div class="form-group checkbox">
+                            <label class="inline" for="keeplogin">
+                                <input asp-for="RememberMe" id="keeplogin" value="1"/>
+                                保持会话
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success btn-lg btn-block" style="background:#708eea;">登 录</button>
+                        </div>
+                        <!--@@AdminLoginFormEnd-->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="_Script">
+</body>
+</html> 

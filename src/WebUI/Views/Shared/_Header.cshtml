@@ -1,0 +1,122 @@
+@model MenusDto
+@inject IOptionsSnapshot<AppOptions> app
+@inject ISiteConfigurationService _sysConfigService
+@{
+    var _sysConfig = await _sysConfigService.GetConfiguration<SystemConfigInfo>(); 
+} 
+<!-- Logo -->
+<a href="javascript:;" class="logo">
+    <!-- 迷你模式下Logo的大小为50X50 -->
+    <span class="logo-mini">@(_sysConfig.AppName)</span>
+    <!-- 普通模式下Logo -->
+    <span class="logo-lg">@(_sysConfig.AppName)</span>
+</a>
+
+<!-- 顶部通栏样式 -->
+<nav class="navbar navbar-static-top">
+
+    <!--第一级菜单-->
+    <div id="firstnav">
+        <!-- 边栏切换按钮-->
+        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">隐藏边栏</span>
+        </a>
+
+        <!--如果不想在顶部显示角标,则给ul加上disable-top-badge类即可-->
+        <ul class="nav nav-tabs nav-addtabs disable-top-badge hidden-xs" role="tablist">
+             @Html.Raw(Model.NavList)
+        </ul>
+
+        <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+
+                <li class="hidden-xs">
+                    <a href="@{@app.Value.PUBLIC}" target="_blank"><i class="fa fa-home" style="font-size:14px;"></i> 主页</a>
+                </li>
+
+                <!-- 清除缓存 -->
+                <li class="hidden-xs">
+                    <a href="javascript:;" data-toggle="dropdown" title="清除缓存">
+                        <i class="fa fa-trash"></i> 清除缓存
+                    </a>
+                    <ul class="dropdown-menu wipecache">
+                        <li><a href="javascript:;" data-type="all"><i class="fa fa-trash fa-fw"></i> 一键清除缓存</a></li>
+                        <li class="divider"></li>
+                        <li><a href="javascript:;" data-type="content"><i class="fa fa-file-text fa-fw"></i> 清除内容缓存</a></li>
+                        <li><a href="javascript:;" data-type="template"><i class="fa fa-file-image-o fa-fw"></i> 清除模板缓存</a></li>
+                        <li><a href="javascript:;" data-type="addons"><i class="fa fa-rocket fa-fw"></i> 清除插件缓存</a></li>
+                        <li><a href="javascript:;" data-type="browser"><i class="fa fa-chrome fa-fw"></i> 清除浏览器缓存
+                            <span data-toggle="tooltip" data-title="清除浏览器端静态JS、CSS、图片等资源"><i class="fa fa-info-circle"></i></span>
+                        </a></li>
+                    </ul>
+                </li>
+
+                <!-- 全屏按钮 -->
+                <li class="hidden-xs">
+                    <a href="#" data-toggle="fullscreen"><i class="fa fa-arrows-alt"></i></a>
+                </li>
+
+                <!-- 账号信息下拉框 -->
+                <li class="dropdown user user-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <img src="@User.Identity.GetAvatar()" class="user-image" alt="">
+                        <span class="hidden-xs">@User.Identity?.Name</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <!-- User image -->
+                        <li class="user-header">
+                            <img src="@User.Identity.GetAvatar()" class="img-circle" alt="">
+
+                            <p>
+                                @User.Identity?.Name
+                                <small>@User.Identity.GetLoginTime()</small>
+                            </p>
+                        </li>
+                        <li class="user-body">
+                            <div class="visible-xs">
+                                <div class="pull-left">
+                                    <a href="__PUBLIC__" target="_blank"><i class="fa fa-home" style="font-size:14px;"></i> 首页</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="javascript:;" data-type="all" class="wipecache"><i class="fa fa-trash fa-fw"></i> 一键清除缓存</a>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- Menu Footer-->
+                        <li class="user-footer">
+                            <div class="pull-left">
+                                <a asp-action="Profile" asp-controller="General" class="btn btn-primary addtabsit"><i class="fa fa-user"></i>
+                                    个人信息</a>
+                            </div>
+                            <div class="pull-right">
+                                <a asp-action="LogOff" asp-controller="Account" class="btn btn-danger"><i class="fa fa-sign-out"></i>
+                                    退出</a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <!-- 控制栏切换按钮 -->
+                <li class="hidden-xs">
+                    <a href="javascript:;" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    @if(app.Value.MultipleNav)
+    {
+        <!--第二级菜单,只有在multiplenav开启时才显示-->
+        <div id="secondnav">
+            <ul class="nav nav-tabs nav-addtabs disable-top-badge" role="tablist">
+                @if(Model.SelectedMenu != null)
+                {
+                    <li role="presentation" id="tab_@Model.SelectedMenu.Id" class="@(Model.RefererMenu==null?"":"active")"><a href="#con_@Model.SelectedMenu.Id" node-id="@Model.SelectedMenu.Id" aria-controls="@Model.SelectedMenu.Id" role="tab" data-toggle="tab"><i class="fa fa-dashboard fa-fw"></i> <span>@Model.SelectedMenu.Title</span> <span class="pull-right-container"> </span></a></li>
+                }
+                @if(Model.RefererMenu != null)
+                {
+                    <li role="presentation" id="tab_@Model.RefererMenu.Id" class="active"><a href="#con_@Model.RefererMenu.Id" node-id="@Model.RefererMenu.Id" aria-controls="@Model.RefererMenu.Id" role="tab" data-toggle="tab"><i class="fa fa-list fa-fw"></i> <span>@Model.RefererMenu.Title</span> <span class="pull-right-container"> </span></a> <i class="close-tab fa fa-remove"></i></li>
+                }
+            </ul>
+        </div>
+    }  
+</nav>

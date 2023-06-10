@@ -1,0 +1,24 @@
+﻿[
+  {
+    "Id": 1,
+    "CreateTime": "2023-06-01T10:01:01",
+    "LastModified": "2023-06-03T10:00:33",
+    "LastModifiedBy": 0,
+    "CreatedBy": 0,
+    "UserName": "admin",
+    "NickName": "admin",
+    "Avatar": "\/assets\/img\/avatar.png",
+    "Email": "info@xxx.com",
+    "Mobile": "13800138000",
+    "LoginFailure": 0,
+    "LoginTime": "2023-06-03T10:00:31",
+    "LoginIp": "::1",
+    "Token": "0c2a2ca0b5b04cba996a0e3ad2144e60",
+    "Status": 0,
+    "LockoutEnabled": false,
+    "LockoutEnd": null,
+    "TwoFactorEnabled": false,
+    "PasswordHash": "98692CEA72ED669009D68D0CF5B5054DA2520265",
+    "Salt": "123456"
+  }
+]

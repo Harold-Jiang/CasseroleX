@@ -1,0 +1,35 @@
+﻿@model MenusDto
+@inject IOptionsSnapshot<AppOptions> app
+@inject ICurrentUserService _currentUserService
+@inject IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
+<html>
+<head>
+    <partial name="_Meta">
+</head>
+
+<body class="inside-header inside-aside @(!string.IsNullOrEmpty(HttpContextAccessor.HttpContext?.Request.Query["dialog"].ToString()) ? "is-dialog" : "")">
+    <div id="main" role="main">
+        <div class="tab-content tab-addtabs">
+            <div id="content">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="content-header hide">
+                            <h1>控制台<small>控制面板</small></h1>
+                        </section>
+                 
+                        <div class="content">
+                            @RenderBody()
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <partial name="_Script">
+</body>
+</html>
+
+
+
+ 
