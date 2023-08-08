@@ -8,7 +8,8 @@ CasseroleX is a backend development framework based on permission management.
  
 </div>
 
-[![](https://img.alicdn.com/tfs/TB1t6QPylr0gK0jSZFnXXbRRXXa-4000-1378.png)](http://ng.ant.design)
+[![](https://github.com/Harold-Jiang/CasseroleX/blob/master/template.png)](https://github.com/Harold-Jiang/CasseroleX/blob/master/template.png)
+
 
 English | [简体中文](README-zh_CN.md)
 
@@ -38,7 +39,7 @@ English | [简体中文](README-zh_CN.md)
 
 ## 🎨 UI Specification
 
-The front-end interface uses `Fastadmin`, which integrates `AdminLTE`, `Bootstrap`, `jQuery`, `Bootstrap table`, `Layer` and other front-end frameworks. I would like to express my special gratitude to them for saving me a lot of time on the UI
+The management interface uses `Fastadmin`, which integrates front-end frameworks such as` AdminLTE`, `Bootstrap`, `jQuery`, `Bootstrap table`, and `Layer`. I would like to express my special gratitude to them for saving me a lot of time on the UI interface
 
 
 ## 📦 Installation
