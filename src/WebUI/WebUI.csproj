@@ -11,6 +11,13 @@
         <EnableNETAnalyzers>False</EnableNETAnalyzers>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Compile Remove="wwwroot\uploads\**" />
+      <Content Remove="wwwroot\uploads\**" />
+      <EmbeddedResource Remove="wwwroot\uploads\**" />
+      <None Remove="wwwroot\uploads\**" />
+    </ItemGroup>
+
 
   
     <ItemGroup>
