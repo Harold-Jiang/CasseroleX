@@ -1,0 +1,162 @@
+﻿@using CasseroleX.Application.Users.Queries;
+@model UserDto
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+    <input type="hidden" name="id" value="@Model.Id">
+    <div class="form-group">
+        <label for="c-group_id" class="control-label col-xs-12 col-sm-2">Group:</label>
+        <div class="col-xs-12 col-sm-4">
+            @await Component.InvokeAsync("GetUserGroupsSelect",new { dic = new Dictionary<string,string>{ { "name","pid"}, {"data-group_id", Model.GroupId.ToString() }}, selected = Model.GroupId})
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-username" class="control-label col-xs-12 col-sm-2">Username:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-username" data-rule="required" class="form-control" name="username" type="text" value="@Model.UserName">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-nickname" class="control-label col-xs-12 col-sm-2">Nickname:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-nickname" data-rule="required" class="form-control" name="nickname" type="text" value="@Model.NickName">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-password" class="control-label col-xs-12 col-sm-2">Password:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-password" data-rule="password" class="form-control" name="password" type="password" value="" placeholder="Leave password blank if dont want to change" autocomplete="new-password" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-email" class="control-label col-xs-12 col-sm-2">Email:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-email" data-rule="" class="form-control" name="email" type="text" value="@Model.Email">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-mobile" class="control-label col-xs-12 col-sm-2">Mobile:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-mobile" data-rule="" class="form-control" name="mobile" type="text" value="@Model.Mobile">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-avatar" class="control-label col-xs-12 col-sm-2">Avatar:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                <input id="c-avatar" data-rule="" class="form-control" size="50" name="avatar]" type="text" value="@Model.Avatar}">
+                <div class="input-group-addon no-border no-padding">
+                    <span><button type="button" id="faupload-avatar" class="btn btn-danger faupload" data-input-id="c-avatar" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="false" data-preview-id="p-avatar"><i class="fa fa-upload"></i> Upload</button></span>
+                    <span><button type="button" id="fachoose-avatar" class="btn btn-primary fachoose" data-input-id="c-avatar" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> Choose</button></span>
+                </div>
+                <span class="msg-box n-right" for="c-avatar"></span>
+            </div>
+            <ul class="row list-inline faupload-preview" id="p-avatar"></ul>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-level" class="control-label col-xs-12 col-sm-2">Level:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-level" data-rule="required" class="form-control" name="level" type="number" value="@Model.Level">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-gender" class="control-label col-xs-12 col-sm-2">Gender:</label>
+        <div class="col-xs-12 col-sm-8"> 
+            <label>
+                @Html.RadioButton("status", "Male", Model.Gender == 1, new { id = "status-normal" })Normal
+            </label>
+            <label>
+                @Html.RadioButton("status", "Female", Model.Status == 0, new { id = "status-hidden" })Hidden
+            </label> 
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-birthday" class="control-label col-xs-12 col-sm-2">Birthday:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-birthday" data-rule="" class="form-control datetimepicker" data-date-format="YYYY-MM-DD" data-use-current="true" name="birthday" type="text" value="@Model.BirthDay">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-bio" class="control-label col-xs-12 col-sm-2">Bio:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-bio" data-rule="" class="form-control" name="bio" type="text" value="@Model.Bio">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-money" class="control-label col-xs-12 col-sm-2">Money:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-money" data-rule="required" class="form-control" name="money" type="number" value="@Model.Money">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-score" class="control-label col-xs-12 col-sm-2">Score:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-score" data-rule="required" class="form-control" name="score" type="number" value="@Model.Score">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-successions" class="control-label col-xs-12 col-sm-2">Successions:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-successions" data-rule="required" class="form-control" name="successions" type="number" value="@Model.Successions">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-maxsuccessions" class="control-label col-xs-12 col-sm-2">Maxsuccessions:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-maxsuccessions" data-rule="required" class="form-control" name="maxsuccessions" type="number" value="@Model.MaxSuccessions">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-prevtime" class="control-label col-xs-12 col-sm-2">Prevtime:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-prevtime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="prevtime" type="text" value="@Model.PrevTime|datetime">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-logintime" class="control-label col-xs-12 col-sm-2">Logintime:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-logintime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="logintime" type="text" value="@Model.LoginTime">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-loginip" class="control-label col-xs-12 col-sm-2">Loginip:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-loginip" data-rule="required" class="form-control" name="loginip" type="text" value="@Model.LoginIp">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-loginfailure" class="control-label col-xs-12 col-sm-2">Loginfailure:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-loginfailure" data-rule="required" class="form-control" name="loginfailure" type="number" value="@Model.LoginFailure">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-joinip" class="control-label col-xs-12 col-sm-2">Joinip:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-joinip" data-rule="required" class="form-control" name="joinip" type="text" value="@Model.JoinIp">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-jointime" class="control-label col-xs-12 col-sm-2">Jointime:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-jointime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="jointime" type="text" value="@Model.JoinTime">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="content" class="control-label col-xs-12 col-sm-2">Status:</label>
+        <div class="col-xs-12 col-sm-8">
+            <label>
+                @Html.RadioButton("status", "normal", Model.Status == Status.normal, new { id = "status-normal" })Normal
+            </label>
+            <label>
+                @Html.RadioButton("status", "hidden", Model.Status == Status.hidden, new { id = "status-hidden" })Hidden
+            </label>
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-primary btn-embossed disabled">OK</button>
+            <button type="reset" class="btn btn-default btn-embossed">Reset</button>
+        </div>
+    </div>
+</form>

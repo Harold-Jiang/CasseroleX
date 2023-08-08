@@ -1,5 +1,8 @@
-﻿using CasseroleX.Application.Common.Interfaces;
+﻿using System.Security.Claims;
+using CasseroleX.Application.Common.Interfaces;
+using CasseroleX.Application.Utils;
 using CasseroleX.Domain.Common;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -7,15 +10,15 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 namespace CasseroleX.Infrastructure.Persistence.Interceptors;
 public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
 {
-    //private readonly ICurrentUserService _currentUserService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IDateTime _dateTime;
 
     public AuditableEntitySaveChangesInterceptor(
-       // ICurrentUserService currentUserService,
-        IDateTime dateTime)
+        IDateTime dateTime,
+        IHttpContextAccessor httpContextAccessor)
     {
-       // _currentUserService = currentUserService;
         _dateTime = dateTime;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
@@ -40,14 +43,14 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
         {
             if (entry.State == EntityState.Added)
             {
-               // entry.Entity.CreatedBy = _currentUserService.UserId;
+                entry.Entity.CreatedBy = (_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier)).ToInt();
                 entry.Entity.CreateTime  = _dateTime.Now;
             }
 
             if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())
             {
-                //entry.Entity.LastModifiedBy = _currentUserService.UserId;
-                entry.Entity.LastModified = _dateTime.Now;
+                entry.Entity.LastModifiedBy = (_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier)).ToInt();
+                entry.Entity.UpdateTime = _dateTime.Now;
             }
         }
     }

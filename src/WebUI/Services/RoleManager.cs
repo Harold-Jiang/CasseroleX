@@ -34,7 +34,7 @@ public class RoleManager:IRoleManager
     public async Task<HashSet<string>> GetPermissionsAsync(int adminId,CancellationToken cancellationToken = default)
     { 
         //获取缓存
-        var permissions = await _cache.GetAsync<HashSet<string>>(string.Format(CacheKeys. USER_ROLEPERMISSIONS_BY_ADMINID_KEY,adminId), cancellationToken);
+        var permissions = await _cache.GetAsync<HashSet<string>>(string.Format(CacheKeys. ADMIN_ROLEPERMISSIONS_BY_ADMINID_KEY,adminId), cancellationToken);
         if (permissions is not null)
         {
             return permissions;
@@ -92,7 +92,7 @@ public class RoleManager:IRoleManager
             }
         }
         //登录验证则需要保存规则列表
-        await _cache.SetAsync(string.Format(CacheKeys.USER_ROLEPERMISSIONS_BY_ADMINID_KEY, adminId), permissions,29990,cancellationToken);
+        await _cache.SetAsync(string.Format(CacheKeys.ADMIN_ROLEPERMISSIONS_BY_ADMINID_KEY, adminId), permissions,29990,cancellationToken);
 
         return permissions;
     }
@@ -102,72 +102,48 @@ public class RoleManager:IRoleManager
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    public async Task<(List<string>, List<int>)> GetRolePermissionIdsAsync(int userId,CancellationToken cancellationToken = default)
+    public async Task<(List<string>, List<int>)> GetRolePermissionIdsAsync(int adminId, CancellationToken cancellationToken = default)
     {
-        var roles = await _context.AdminRoles
-            .Include(x => x.Role)
-            .Where(x => x.AdminId == userId)
-            .ToArrayAsync(cancellationToken);
-
+        var roles = await GetRolesAsync(adminId,cancellationToken); 
         var ids = new List<string>();
         foreach (var r in roles)
         {
-            if (r.Role.Rules.Contains("*"))
+            if (r.Rules.Contains("*"))
             {
                 ids.Clear();
                 ids.Add("*");
                 break;
             }
-            ids.AddRange(r.Role.Rules.ToIList<string>());
+            ids.AddRange(r.Rules.ToIList<string>());
         }
         //角色组Id
-        var roleIds = roles.Select(x => x.RoleId).ToList();
+        var roleIds = roles.Select(x => x.Id).ToList();
         return (ids.Distinct().ToList(),roleIds);
     }
 
     /// <summary>
-    /// 获取管理员角色Claim
+    /// 获取用户的角色组
     /// </summary>
     /// <param name="userId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    //public async Task<List<Claim>> GetRolePermissionClaimAsync(int userId, CancellationToken cancellationToken = default)
-    //{
-    //    var roles = await _context.AdminRoles
-    //        .Include(x => x.Role)
-    //        .Where(x => x.AdminId == userId)
-    //        .ToArrayAsync(cancellationToken);
-
-    //    var ids = new List<string>();
-    //    foreach (var r in roles)
-    //    {
-    //        ids.AddRange(r.Role.Rules.ToIList<string>());
-    //    }
-    //    //角色组Id
-    //    var roleIds = roles.Select(x => x.Role.Id).ToList();
-    //    var roleNames = roles.Select(x => x.Role.Name).ToList();
-
-    //    return new List<Claim>
-    //    {
-    //        new Claim(AuthExtensions.RoleIds,string.Join(',',roleIds),ClaimValueTypes.String),
-    //        new Claim(AuthExtensions.RolePermissonIds,ids.Contains("*")? "*" : string.Join(',',ids.Distinct()),ClaimValueTypes.String),
-    //        new Claim(ClaimTypes.Role,string.Join(',',roleNames),ClaimValueTypes.String),
-    //    };
-    //}
-
-
-    /// <summary>
-    /// 取出当前管理员所拥有权限的分组
-    /// </summary> 
-    public async Task<List<int>> GetChildrenRoleIds(int userId,bool withself = false,CancellationToken cancellationToken = default)
+    public async Task<List<RoleDto>> GetRolesAsync(int adminId, CancellationToken cancellationToken = default)
     {
-        // 当前管理员所有的角色组 
-        var roles = await _context.AdminRoles
+        return await _context.AdminRoles
             .Include(x => x.Role)
-            .Where(x => x.AdminId == userId)
+            .Where(x => x.AdminId == adminId)
             .Select(x => x.Role)
-            .ProjectTo<RolesDto>(_mapper.ConfigurationProvider)
+            .ProjectTo<RoleDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
+    }
+     
+    /// <summary>
+    /// 取出管理员所拥有权限的分组
+    /// </summary> 
+    public async Task<List<int>> GetChildrenRoleIds(int adminId, bool withself = false,CancellationToken cancellationToken = default)
+    {
+        // 管理员所有的角色组 
+        var roles = await GetRolesAsync(adminId, cancellationToken);
 
         var roleIds = roles.Select(x => x.Id).ToList();
         var originRoleIds = new List<int>();
@@ -182,9 +158,9 @@ public class RoleManager:IRoleManager
         // 取出所有角色组
         var allRoles = await _context.Roles
             .Where(x => x.Status == Status.normal)
-            .ProjectTo<RolesDto>(_mapper.ConfigurationProvider)
+            .ProjectTo<RoleDto>(_mapper.ConfigurationProvider)
             .ToListAsync();
-        var objList = new List<RolesDto>();
+        var objList = new List<RoleDto>();
         foreach (var role in roles)
         {
             if (role.Rules == "*")
@@ -205,7 +181,46 @@ public class RoleManager:IRoleManager
         return childrenRoleIds;
     }
 
-   
+    /// <summary>
+    /// 取出管理员所拥有权限的管理员
+    /// </summary> 
+    public async Task<List<int>> GetChildrenAdminIds(bool isSuperAdmin,int adminId, bool withself = false, CancellationToken cancellationToken = default)
+    {
+        List<int> childrenAdminIds = new List<int>();
+
+        if (!isSuperAdmin)
+        {
+            List<int> roleIds = await GetChildrenRoleIds(adminId, false,cancellationToken);
+            List<int> adminIds = await _context.AdminRoles
+                .Where(a => roleIds.Contains(a.RoleId))
+                .Select(a => a.AdminId)
+                .ToListAsync(cancellationToken);
+
+            foreach (var id in adminIds)
+            {
+                childrenAdminIds.Add(id);
+            }
+        }
+        else
+        {
+            // 超级管理员拥有所有人的权限
+            childrenAdminIds = await _context.Admins.Select(a => a.Id).ToListAsync();
+        }
+
+        if (withself)
+        {
+            if (!childrenAdminIds.Contains(adminId))
+            {
+                childrenAdminIds.Add(adminId);
+            }
+        }
+        else
+        {
+            childrenAdminIds.Remove(adminId);
+        }
+
+        return childrenAdminIds;
+    }
 
     /// <summary>
     /// 检查用户的权限

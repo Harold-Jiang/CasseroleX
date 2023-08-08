@@ -1,0 +1,38 @@
+﻿@inject ICurrentUserService _currentUserService
+<style>
+    .bootstrap-table tr td .text-muted {
+        color: #888;
+    }
+</style>
+<div class="panel panel-default panel-intro">
+    @await Component.InvokeAsync("BuildHeading") 
+    <div class="panel-body">
+        @Html.AntiForgeryToken()
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade active in" id="one">
+                <div class="widget-body no-padding">
+                    <div id="toolbar" class="toolbar">
+                        <a href="javascript:;" class="btn btn-primary btn-refresh" title="{:__('Refresh')}" data-force-refresh="false"><i class="fa fa-refresh"></i> </a>
+                        <a href="javascript:;" class="btn btn-success btn-add @((await _currentUserService.CheckPermissionAsync("auth/menu/add") > 0 ?"":"hide"))" title="Add"><i class="fa fa-plus"></i> Add</a>
+                        <a href="javascript:;" class="btn btn-success btn-edit btn-disabled disabled @((await _currentUserService.CheckPermissionAsync("auth/menu/edit") > 0 ?"":"hide"))" title="Edit"><i class="fa fa-pencil"></i> Edit</a>
+                        <a href="javascript:;" class="btn btn-danger btn-del btn-disabled disabled @((await _currentUserService.CheckPermissionAsync("auth/menu/del") > 0 ?"":"hide"))" title="Delete"><i class="fa fa-trash"></i> Delete</a>
+                        <div class="dropdown btn-group @((await _currentUserService.CheckPermissionAsync("auth/menu/multi") > 0 ?"":"hide"))">
+                            <a class="btn btn-primary btn-more dropdown-toggle btn-disabled disabled" data-toggle="dropdown"><i class="fa fa-cog"></i> More</a>
+                            <ul class="dropdown-menu text-left" role="menu">
+                                <li><a class="btn btn-link btn-multi btn-disabled disabled" href="javascript:;" data-params="status=normal"><i class="fa fa-eye"></i> Set to normal</a></li>
+                                <li><a class="btn btn-link btn-multi btn-disabled disabled" href="javascript:;" data-params="status=hidden"><i class="fa fa-eye-slash"></i> Set to hidden</a></li>
+                            </ul>
+                        </div>
+                        <a href="javascript:;" class="btn btn-danger btn-toggle-all"><i class="fa fa-plus"></i> Toggle all</a>
+                    </div>
+                    <table id="table" class="table table-bordered table-hover" 
+                           data-operate-edit="@(await _currentUserService.CheckPermissionAsync("auth/menu/edit"))"
+                           data-operate-del="@(await _currentUserService.CheckPermissionAsync("auth/menu/del"))"
+                           width="100%">
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

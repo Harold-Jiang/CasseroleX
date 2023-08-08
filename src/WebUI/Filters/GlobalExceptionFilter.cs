@@ -1,11 +1,12 @@
-﻿using CasseroleX.Application.Common.Models;
+﻿using CasseroleX.Application.Common.Exceptions;
+using CasseroleX.Application.Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace WebUI.Filters;
 
 /// <summary>
-/// 全局异常过滤器
+/// Global Exception Filter
 /// </summary>
 public class GlobalExceptionFilter : IAsyncExceptionFilter
 {
@@ -20,7 +21,14 @@ public class GlobalExceptionFilter : IAsyncExceptionFilter
     }
 
     public Task OnExceptionAsync(ExceptionContext context)
-    { 
+    {
+        //Model validation exceptions directly return exception information
+        if (context.Exception is ValidatorException validatorException)
+        {
+            List<string> errorList = validatorException.Errors.Values.SelectMany(arr => arr).ToList();
+            HandlerException(context, new(0, string.Join("|", errorList), null, $"{context.HttpContext.Request.Path}", 3));
+            return Task.CompletedTask;
+        }
         string error = string.Empty;
         void ReadException(Exception ex)
         {
@@ -32,21 +40,21 @@ public class GlobalExceptionFilter : IAsyncExceptionFilter
         }
         ReadException(context.Exception);
 
-        _logger.LogError("异常信息：{error}",error);//记录错误日志
+        //exception log
+        _logger.LogError("CasseroleX Exception：{error}", error);
 
-        Result apiResponse = new(0, _environment.IsDevelopment() ? error : "服务器异常，请稍后再试.", null, $"{context.HttpContext.Request.Path}", 3);
+        Result apiResponse = new(0, _environment.IsDevelopment() ? error : "The server is abnormal. Please try again later.", null, $"{context.HttpContext.Request.Path}", 3);
         HandlerException(context, apiResponse);
         return Task.CompletedTask;
     }
 
     private static void HandlerException(ExceptionContext context, Result apiResponse)
-    {
-        //根据请求方式返回异常
+    { 
         if (HttpMethods.IsPost(context.HttpContext.Request.Method))
         {
             context.Result = new JsonResult(apiResponse)
             {
-                StatusCode = StatusCodes.Status200OK, //post 返回200和JSON对象 前端根据JSON弹出警告窗
+                StatusCode = StatusCodes.Status200OK,  
                 ContentType = "application/json",
             };
         }

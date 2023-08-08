@@ -2,7 +2,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
     var Controller = {
         index: function () {
-            // 初始化表格参数配置
+            // Initialize Table Parameter Configuration
             Table.api.init({
                 extend: {
                     index_url: 'user/rule/index',
@@ -10,13 +10,14 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     edit_url: 'user/rule/edit',
                     del_url: 'user/rule/del',
                     multi_url: 'user/rule/multi',
-                    table: 'user_rule',
+                    dragsort_url: "user/rule/sort",
+                    table: 'userrules',
                 }
             });
 
             var table = $("#table");
 
-            // 初始化表格
+            // Initialize Table
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pk: 'id',
@@ -45,7 +46,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 commonSearch: false,
             });
 
-            // 为表格绑定事件
+            // Bind events for tables
             Table.api.bindevent(table);
         },
         add: function () {

@@ -1,0 +1,52 @@
+﻿@inject ISiteConfigurationService _sysConfigService
+@{
+    var upload = await _sysConfigService.GetConfigurationAsync<UploadConfigInfo>();
+    var multiple = Context.Request.Query["multiple"].ToString();
+}
+<style>
+    #one .commonsearch-table{
+        padding-top:15px!important;
+    }
+</style>
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <ul class="nav nav-tabs" data-field="category">
+            <li class="active"><a href="#t-all" data-value="" data-toggle="tab">All</a></li>
+            @foreach(var item in upload.AttachmentCategory)
+            {
+                <li><a href="#t-@item.Key" data-value="@item.Key" data-toggle="tab">@item.Value</a></li>
+            }
+            @if (string.IsNullOrEmpty(ViewBag.MimeType) || ViewBag.MimeType.IndexOf("image/") == -1)
+            {<li class="pull-right dropdown filter-type">
+                <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-filter"></i> Filter Type</a>
+                <ul class="dropdown-menu text-left" role="menu">
+                        <li class="active"><a href="javascript:" data-value="">All</a></li>
+                    @foreach(var item in upload.MimeTypeList)
+                    {
+                        <li><a href="javascript:" data-value="@item.Value">@item.Key</a></li>
+                    }
+                </ul>
+            </li>
+            }
+        </ul>
+    </div>
+
+    <div class="panel-body no-padding">
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade active in" id="one">
+                <div class="widget-body no-padding">
+                    <div id="toolbar" class="toolbar">
+                        @await Component.InvokeAsync("BuildToolbar",new []{ "refresh"})
+                        <span><button type="button" id="faupload-image" class="btn btn-success faupload" data-mimetype="@ViewBag.MimeType" data-multiple="true"><i class="fa fa-upload"></i> Upload</button></span>
+                       @if(multiple == "true")
+                        {<a class="btn btn-danger btn-choose-multi"><i class="fa fa-check"></i> Choose</a>}
+                    </div>
+                    <table id="table" class="table table-bordered table-hover table-nowrap" width="100%">
+
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

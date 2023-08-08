@@ -2,11 +2,10 @@
 using CasseroleX.Application.Common.Models;
 using CasseroleX.Application.Menus.Queries;
 using CasseroleX.Application.Utils;
-using CasseroleX.Infrastructure.Authentication;
+using CasseroleX.Infrastructure.OptionSetup;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
-using WebUI.OptionSetup;
 
 namespace WebUI.Controllers;
 
@@ -44,13 +43,13 @@ public class IndexController : BaseAdminController
                         _app.AdminSkin = cookieValue;
                         break;
                     case "multiplenav":
-                        _app.MultipleNav = bool.Parse(cookieValue);
+                        _app.MultipleNav = cookieValue == "1" ? true : false;
                         break;
                     case "multipletab":
-                        _app.MultipleTab = bool.Parse(cookieValue);
+                        _app.MultipleTab = cookieValue == "1" ? true : false;
                         break;
                     case "show_submenu":
-                        _app.ShowSubMenu = bool.Parse(cookieValue);
+                        _app.ShowSubMenu = cookieValue == "1" ? true : false;
                         break;
                     case "sidebar_collapse":
                         ViewBag.SidebarCollapse = cookieValue;
@@ -59,10 +58,8 @@ public class IndexController : BaseAdminController
             }
         }
           
-        var sidebar = await Mediator.Send(new GetMenusQuery
-        {
-            PermissionIds = User.Identity.GetPermissionIds(),
-            //AdminId = User.Identity.ID(),
+        var sidebar = await Mediator.Send(new GetHomeMenusQuery
+        { 
             MultipleNav = _app.MultipleNav,
             ShowSubMenu = _app.ShowSubMenu,
             RefererUrl = HttpContext.Session.GetString(HeaderNames.Referer),

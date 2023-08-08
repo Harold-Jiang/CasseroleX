@@ -2,39 +2,32 @@
 
 
 public partial class SystemConfigInfo : IConfig
-{
-    /// <summary>
-    /// 应用名称
-    /// </summary>
-    public string AppName { get; set; } = "Jfmall";
-    /// <summary>
-    /// 备案号
-    /// </summary>
-    public string? BeiAn { get; set; }
+{ 
+    public string Name { get; set; } = "CasseroleX"; 
 
-
-    /// <summary>
-    /// 禁止访问的IP
-    /// </summary>
     public string? ForbiddeIp { get; set; }
 
+    public string Version { get; set; } = "1.0.0";
+
+    public string PUBLIC { get; set; } = ""; 
+
+    public string CDN { get; set; } = "";
+
+    public string Prefix { get; set; } = "";
+      
+    public string? LoginBackground { get; set; }
+
+    public string Language { get; set; } = "en";
+
+    public string? Fixedpage { get; set; }
+
+    public string? Timezone { get; set; }
+
+    
 }
-
+  
 /// <summary>
-/// 系统配置的分组
-/// </summary>
-public class SysConfigGroup
-{
-    public static string Basic => "基础配置";
-    public static string Email => "邮件配置";
-    public static string Sms => "短信配置";
-    public static string Upload => "上传配置";
-    public static string Account => "账户配置";
-};
-
-
-/// <summary>
-/// 系统配置的数据类型
+/// Data types for system configuration
 /// </summary>
 public class SysConfigDataType
 {
@@ -62,23 +55,23 @@ public class SysConfigDataType
 
 
 /// <summary>
-/// 系统配置匹配规则列表
+/// System Configuration Matching Rule List
 /// </summary>
 public class SysConfigRegexList
 {
-    public static string Required => "必选";
-    public static string Digits => "数字";
-    public static string Letters => "字母";
-    public static string Date => "日期";
-    public static string Time => "时间";
-    public static string Email => "邮箱";
-    public static string Url => "网址";
-    public static string Qq => "QQ号";
-    public static string IDcard => "身份证";
-    public static string Tel => "座机电话";
-    public static string Mobile => "手机号";
-    public static string Zipcode => "邮编";
-    public static string Chinese => "中文";
-    public static string Username => "用户名";
-    public static string Password => "密码";
+    public static string Required => "Required";
+    public static string Digits => "Numbers";
+    public static string Letters => "Letters";
+    public static string Date => "Date";
+    public static string Time => "Time";
+    public static string Email => "Email";
+    public static string Url => "URL";
+    public static string QQ => "QQ number";
+    public static string IDcard => "ID card";
+    public static string Tel => "landline phone";
+    public static string Mobile => "Mobile number";
+    public static string Zipcode => "Zipcode";
+    public static string Chinese => "Chinese";
+    public static string Username => "User name";
+    public static string Password => "Password";
 }

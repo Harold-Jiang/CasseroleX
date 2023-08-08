@@ -45,23 +45,13 @@ app.UseStaticFiles(new StaticFileOptions
 {
     ContentTypeProvider = provider, 
 });
-
-//app.UseSwaggerUi3(settings =>
-//{
-//    settings.Path = "/api";
-//    settings.DocumentPath = "/api/specification.json";
-//});
-
-app.UseRouting();
-//使用跨域
-app.UseCors("CorsPolicy");
-//启用认证
-app.UseAuthentication();
-//授权服务
-app.UseAuthorization();
-//添加中间件简化请求日志记录
+ 
+app.UseRouting(); 
+app.UseCors("CorsPolicy"); 
+app.UseAuthentication(); 
+app.UseAuthorization(); 
 app.UseSerilogRequestLogging();
-
+ 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Index}/{action=Index}/{id?}");

@@ -3,11 +3,10 @@
 namespace CasseroleX.Infrastructure.Common;
 
 /// <summary>
-/// 验证码帮助类
+/// Verification code Helper class
 /// </summary>
 public class VerificationCodeGenerate
 {
-    private static readonly string Letters = "1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,T,U,V,W,X,Y,Z";
     ///<summary>
     ///Color collection of interference lines
     ///</summary>
@@ -155,6 +154,7 @@ public class VerificationCodeGenerate
             SKColors.Gray,
             SKColors.ForestGreen
     }; } 
+   
     ///<summary>
     ///Create a brush
     ///</summary>
@@ -171,17 +171,18 @@ public class VerificationCodeGenerate
         paint.TextSize = fontSize;
         return paint;
     }
+
     /// <summary>
-    /// 获取随机颜色
+    /// Get Random Colors
     /// </summary>
     /// <returns></returns>
     private static SKColor GetRandomColor()
     {
         Random RandomNum_First = new Random((int)DateTime.Now.Ticks);
-        // 对于C#的随机数，没什么好说的
+        
         System.Threading.Thread.Sleep(RandomNum_First.Next(50));
         Random RandomNum_Sencond = new Random((int)DateTime.Now.Ticks);
-        // 为了在白色背景上显示，尽量生成深色
+        // To display on a white background, try to generate dark colors as much as possible
         int int_Red = RandomNum_First.Next(256);
         int int_Green = RandomNum_Sencond.Next(256);
         int int_Blue = (int_Red + int_Green > 400) ? 0 : 400 - int_Red - int_Green;
@@ -210,7 +211,7 @@ public class VerificationCodeGenerate
         }
         if (true)
         {
-            //画图片的背景噪音线
+            //Draw the background noise line of the image
             for (var i = 0; i < 12; i++)
             {
                 var x1 = random.Next(objBitmap.Width);
@@ -221,9 +222,9 @@ public class VerificationCodeGenerate
                 objGraphics.DrawLine(x1, y1, x2, y2, CreatePaint(SKColors.Silver, 0));
             }
         }
-    } 
+    }
     /// <summary>
-    /// 生成验证码图片
+    /// Generate verification code image
     /// </summary>
     public static byte[] GetCaptcha(string captchaText, int width, int height = 30, int lineNum = 1, int lineStrookeWidth = 1)
     {
@@ -234,11 +235,11 @@ public class VerificationCodeGenerate
             using (SKCanvas canvas = new SKCanvas(image2d))
             {
                 Random random = new Random();
-                //填充白色背景
+                //Fill with white background
                 //canvas.DrawColor(SKColors.White); 
                 canvas.Clear(SKColors.AliceBlue);
 
-                //噪点
+                //Noise
                 //AddForeNoisePoint(image2d, random);
                 AddBackgroundNoisePoint(image2d, canvas, random);
 
@@ -260,7 +261,7 @@ public class VerificationCodeGenerate
                 //        canvas.DrawLine(random.Next(0, width), random.Next(0, height), random.Next(0, width), random.Next(0, height), drawStyle);
                 //    }
                 //}
-                //将文字写到画布上 
+                //Write text on the canvas 
                 var drawStyle = new SKPaint
                 {
                     IsAntialias = true,
@@ -271,7 +272,7 @@ public class VerificationCodeGenerate
                 {
                     var font = SKTypeface.FromFamilyName("Verdana", SKFontStyleWeight.SemiBold, SKFontStyleWidth.ExtraCondensed, SKFontStyleSlant.Upright);
 
-                    //转动的度数
+                    //Degrees of rotation
                     float angle = random.Next(-30, 30);
 
                     canvas.Translate(10, 10);
@@ -284,8 +285,7 @@ public class VerificationCodeGenerate
 
 
                     drawStyle.Typeface = font;
-                    drawStyle.Color = GetRandomColor();
-                    //写字 (i + 1) * 16, 28
+                    drawStyle.Color = GetRandomColor(); 
                     canvas.DrawText(chars[i].ToString(), px, py, drawStyle);
 
 
@@ -294,8 +294,8 @@ public class VerificationCodeGenerate
                     canvas.RotateDegrees(-angle, px, py);
                     canvas.Translate(-12, -12);
                 }
-                 
-                //画随机干扰线
+
+                //Draw random interference lines
                 using (SKPaint disturbStyle = new())
                 {
                     for (int i = 0; i < lineNum; i++)
@@ -305,51 +305,12 @@ public class VerificationCodeGenerate
                         canvas.DrawLine(random.Next(0, width), random.Next(0, height), random.Next(0, width), random.Next(0, height), drawStyle);
                     }
                 }
-                //返回图片byte
+                //Return image byte
                 using SKImage img = SKImage.FromBitmap(image2d);
                 using SKData p = img.Encode(SKEncodedImageFormat.Png, 100);
                 return p.ToArray();
             }
         }
-    }
-
-    /// <summary>
-    /// 生成带英文字符的验证码
-    /// </summary>
-    public static string RandomCode(int codeLength = 4)
-    {
-        var array = Letters.Split(new[] { ',' });
-        var random = new Random();
-        var temp = -1;
-        var captcheCode = string.Empty;
-        for (int i = 0; i < codeLength; i++)
-        {
-            if (temp != -1)
-                random = new Random(i * temp * unchecked((int)DateTime.Now.Ticks));
-            var index = random.Next(array.Length);
-            if (temp != -1 && temp == index)
-                return RandomCode(codeLength);
-            temp = index;
-            captcheCode += array[index];
-        }
-        return captcheCode;
-    }
-
-
-    /// <summary>
-    /// 生成数字验证码
-    /// </summary>
-    /// <param name="Length">生成长度</param> 
-    public static string Number(int Length = 4)
-    { 
-        string result = "";
-        System.Random random = new Random();
-        for (int i = 0; i < Length; i++)
-        {
-            result += random.Next(10).ToString();
-        }
-        return result;
-    }
-
-
+    } 
+     
 }

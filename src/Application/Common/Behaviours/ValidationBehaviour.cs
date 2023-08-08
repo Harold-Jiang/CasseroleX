@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using CasseroleX.Application.Common.Exceptions;
+using FluentValidation;
 using MediatR;
 namespace CasseroleX.Application.Common.Behaviours;
 public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
@@ -27,7 +28,7 @@ public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TReque
                 .ToList();
 
             if (failures.Any())
-                throw new ValidationException(failures);
+                throw new ValidatorException(failures);
         }
         return await next();
     }

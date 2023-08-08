@@ -22,7 +22,7 @@ public class SiteConfigurationService : ISiteConfigurationService
         _cache = cache;
     }
 
-    public async Task<T> GetConfiguration<T>() where T : IConfig,new()
+    public async Task<T> GetConfigurationAsync<T>() where T : IConfig,new()
     {
         return await _cache.GetAsync<T>(string.Format(CacheKeys.CONFIGURATION_SITE_BY_TYPE_KEY, typeof(T).Name.ToLowerInvariant()),
         async () =>
@@ -38,7 +38,7 @@ public class SiteConfigurationService : ISiteConfigurationService
     }
 
     /// <summary>
-    /// 设置配置模型的值并返回对象
+    /// Set the values of the configuration model and return the object
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="obj"></param>
@@ -53,22 +53,20 @@ public class SiteConfigurationService : ISiteConfigurationService
             if (prop != null && prop.Value.IsNotNullOrEmpty())
             {
                 var propertyInfo = type.GetProperty(item.Name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-                // 如果T中找到对应的属性
+                // If the corresponding attribute is found in T
                 if (propertyInfo != null)
-                {
-                    //获取item.Name的真实类型
-                    Type realType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? propertyInfo.PropertyType;  //返回指定可以为 null 的类型的基础类型参数
-
+                { 
+                    Type realType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? propertyInfo.PropertyType;  
                     try
                     {
-                        //如果是字典类型
+                        //Judgment type
                         if (realType == typeof(Dictionary<string, string>))
                         {
                             var propertyValue = JsonSerializer.Deserialize<Dictionary<string, string>>(prop.Value!);
                             if (propertyValue != null)
                                 propertyInfo.SetValue(obj, propertyValue);
                         }
-                        else if (realType == typeof(bool)) //如果是bool
+                        else if (realType == typeof(bool)) 
                         {
                             bool propertyValue = prop.Value == "1";
                             propertyInfo.SetValue(obj, propertyValue);
@@ -81,7 +79,7 @@ public class SiteConfigurationService : ISiteConfigurationService
                     }
                     catch
                     {
-                        throw new Exception($"配置选项赋值错误：字段{{{item.Name}}}值{{{prop.Value}}}类型{{{realType}}}");
+                        throw new Exception($"Configuration option assignment error: Field {item.Name} Value {prop.Value} Type {realType}}}");
                     }
                 }
             }

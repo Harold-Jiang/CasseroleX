@@ -63,7 +63,7 @@ public class RolePermissionsConfiguration : IEntityTypeConfiguration<RolePermiss
             .HasDefaultValueSql("'file'")
             .HasComment("menu为菜单,file为权限节点")
             .HasColumnType("enum('menu','file')");
-        b.Property(e => e.LastModified)
+        b.Property(e => e.UpdateTime)
             .HasComment("更新时间");
         b.Property(e => e.Url)
             .HasMaxLength(255)

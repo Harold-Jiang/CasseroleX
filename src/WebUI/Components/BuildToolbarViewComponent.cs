@@ -44,7 +44,7 @@ public class BuildToolbarViewComponent : ViewComponent
         var html = new List<string>();
         foreach (var btn in btns)
         {
-            if (!btnAttr.TryGetValue(btn, out var value) || (btn != "refresh" && !await _currentUserService.CheckPermissionAsync($"{controller}/{btn}")))
+            if (!btnAttr.TryGetValue(btn, out var value) || (btn != "refresh" && !(await _currentUserService.CheckPermissionAsync($"{controller}/{btn}") == 1)))
             {
                 continue;
             }

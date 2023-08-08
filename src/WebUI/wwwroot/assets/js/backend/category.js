@@ -2,7 +2,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
     var Controller = {
         index: function () {
-            // 初始化表格参数配置
+            // Initialize Table Parameter Configuration
             Table.api.init({
                 extend: {
                     index_url: 'category/index',
@@ -10,7 +10,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     edit_url: 'category/edit',
                     del_url: 'category/del',
                     multi_url: 'category/multi',
-                    dragsort_url: 'ajax/weigh',
+                    dragsort_url: 'category/sort',
                     table: 'category',
                 }
             });
@@ -41,10 +41,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     ]
                 ]
             };
-            // 初始化表格
+            // Initialize Table
             table.bootstrapTable(tableOptions);
 
-            // 为表格绑定事件
+            // Bind events for tables
             Table.api.bindevent(table);
 
             //绑定TAB事件

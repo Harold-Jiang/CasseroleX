@@ -8,7 +8,7 @@ require.config({
     //在打包压缩时将会把include中的模块合并到主文件中
     include: ['css', 'layer', 'toastr', 'fast', 'backend', 'table', 'form', 'dragsort', 'drag', 'drop', 'addtabs', 'selectpage', 'bootstrap-daterangepicker'],
     paths: {
-        'lang': "empty:",
+        'lang':'locale/lang',
         'form': 'require-form',
         'table': 'require-table',
         'upload': 'require-upload',
@@ -139,29 +139,19 @@ require(['jquery', 'bootstrap'], function ($, undefined) {
     var Config = requirejs.s.contexts._.config.config;
     //将Config渲染到全局
     window.Config = Config;
-    // 配置语言包的路径
-    var paths = {};
-    paths['lang'] = 'lang.js?callback=define&controllername=' + Config.controllername + '&lang=zh-cn&v=' + Config.site.version;
-    // 避免目录冲突
-    paths['backend/'] = 'backend/';
     // 如果是英文，则移除默认的定义
-    if (Config.language === 'en') {
-        $.each(requirejs.s.contexts._.config.paths, function (key, value) {
-            if (key.match(/\-lang$/)) {
-                define(key);
-            }
-        });
-        define('moment/locale/zh-cn');
+    if (Config.language === 'zh-CN') {
+        requirejs.s.contexts._.config.paths["lang"] = "locale/lang.zh-CN"
     }
-    require.config({paths: paths});
 
     // 初始化
     $(function () {
+       
         require(['fast'], function (Fast) {
             require(['backend'], function (Backend) {
                 //加载相应模块
                 if (Config.jsname) {
-                    require([Config.jsname], function (Controller) {
+                    require([Config.jsname], function (Controller) { 
                         if (Controller.hasOwnProperty(Config.actionname)) {
                             Controller[Config.actionname]();
                         } else {

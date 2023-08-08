@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Text.Json;
+﻿using System.Text.Json;
 using CasseroleX.Application.Common.Caching;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
@@ -8,7 +7,7 @@ namespace CasseroleX.Infrastructure.Caching;
 
 public class CacheService : ICacheService
 {
-    private static readonly ConcurrentDictionary<string, bool> CacheKeys = new();
+    //private readonly ConcurrentDictionary<string, bool> CacheKeys = new();
     private readonly IDistributedCache _distributedCache;
     private readonly RedisOptions _redisOptions;
 
@@ -65,7 +64,7 @@ public class CacheService : ICacheService
             else
                 await _distributedCache.SetStringAsync(key, serializedItem, cancellationToken);
 
-            CacheKeys.TryAdd(key, false);
+            //CacheKeys.TryAdd(key, false);
         }
     }
 
@@ -75,17 +74,9 @@ public class CacheService : ICacheService
         if (!key.Equals(_redisOptions.RedisDataProtectionKey, StringComparison.OrdinalIgnoreCase))
         {
             await _distributedCache.RemoveAsync(key, cancellationToken);
-            CacheKeys.TryRemove(key, out bool _);
+            //CacheKeys.TryRemove(key, out bool _);
         }
     }
 
-    public async Task RemoveByPrefixAsync(string prefix, CancellationToken cancellationToken = default)
-    {
-        IEnumerable<Task> tasks = CacheKeys
-            .Keys
-            .Where(k => k.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-            .Select(k => RemoveAsync(k, cancellationToken));
-
-        await Task.WhenAll(tasks);
-    }
+    public async Task RefreshAsync(string key, CancellationToken cancellationToken = default) => await _distributedCache.RefreshAsync(key, cancellationToken);
 }

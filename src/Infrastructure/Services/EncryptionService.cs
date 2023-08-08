@@ -1,8 +1,8 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using CasseroleX.Application.Common.Exceptions;
 using CasseroleX.Application.Common.Interfaces;
 using CasseroleX.Domain.Enums;
-using CasseroleX.Domain.Exceptions;
 
 namespace CasseroleX.Infrastructure.Services;
 

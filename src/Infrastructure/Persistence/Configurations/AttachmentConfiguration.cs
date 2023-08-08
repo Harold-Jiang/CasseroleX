@@ -48,7 +48,7 @@ public class AttachmentConfiguration : IEntityTypeConfiguration<Attachment>
             .HasMaxLength(100)
             .HasDefaultValueSql("'local'")
             .HasComment("存储位置");
-        b.Property(e => e.LastModified)
+        b.Property(e => e.UpdateTime)
             .HasComment("更新时间");
         b.Property(e => e.UploadTime)
             .HasComment("上传时间");

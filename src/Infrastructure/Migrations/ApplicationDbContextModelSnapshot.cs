@@ -47,10 +47,6 @@ namespace CasseroleX.Infrastructure.Migrations
                         .HasDefaultValueSql("''")
                         .HasComment("电子邮箱");
 
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasComment("更新时间");
-
                     b.Property<int>("LastModifiedBy")
                         .HasColumnType("int");
 
@@ -60,8 +56,8 @@ namespace CasseroleX.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<byte>("LoginFailure")
-                        .HasColumnType("tinyint unsigned")
+                    b.Property<int>("LoginFailure")
+                        .HasColumnType("int")
                         .HasComment("失败次数");
 
                     b.Property<string>("LoginIp")
@@ -120,6 +116,10 @@ namespace CasseroleX.Infrastructure.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasComment("更新时间");
+
                     b.Property<string>("UserName")
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
@@ -146,10 +146,9 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreateTime = new DateTime(2023, 6, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
                             CreatedBy = 0,
                             Email = "info@xxx.com",
-                            LastModified = new DateTime(2023, 6, 3, 10, 0, 33, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = 0,
                             LockoutEnabled = false,
-                            LoginFailure = (byte)0,
+                            LoginFailure = 0,
                             LoginIp = "::1",
                             LoginTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
                             Mobile = "13800138000",
@@ -161,6 +160,71 @@ namespace CasseroleX.Infrastructure.Migrations
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
+                });
+
+            modelBuilder.Entity("CasseroleX.Domain.Entities.AdminLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasComment("ID");
+
+                    b.Property<int>("AdminId")
+                        .HasColumnType("int")
+                        .HasComment("管理员ID");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasComment("内容");
+
+                    b.Property<DateTime>("CreateTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValue(new DateTime(2023, 8, 8, 11, 18, 8, 279, DateTimeKind.Local).AddTicks(3209))
+                        .HasComment("操作时间");
+
+                    b.Property<string>("Ip")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasDefaultValueSql("''")
+                        .HasComment("IP");
+
+                    b.Property<string>("Title")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasDefaultValueSql("''")
+                        .HasComment("日志标题");
+
+                    b.Property<string>("Url")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(1500)
+                        .HasColumnType("varchar(1500)")
+                        .HasDefaultValueSql("''")
+                        .HasComment("操作页面");
+
+                    b.Property<string>("UserAgent")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasDefaultValueSql("''")
+                        .HasComment("User-Agent");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)")
+                        .HasDefaultValueSql("''")
+                        .HasComment("管理员名字");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserName");
+
+                    b.ToTable("AdminLogs");
                 });
 
             modelBuilder.Entity("CasseroleX.Domain.Entities.Attachment", b =>
@@ -180,7 +244,7 @@ namespace CasseroleX.Infrastructure.Migrations
                     b.Property<DateTime>("CreateTime")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2023, 6, 3, 16, 33, 28, 725, DateTimeKind.Local).AddTicks(7544))
+                        .HasDefaultValue(new DateTime(2023, 8, 8, 11, 18, 8, 283, DateTimeKind.Local).AddTicks(7493))
                         .HasComment("创建时间");
 
                     b.Property<int>("CreatedBy")
@@ -223,10 +287,6 @@ namespace CasseroleX.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasComment("宽度");
 
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasComment("更新时间");
-
                     b.Property<int>("LastModifiedBy")
                         .HasColumnType("int");
 
@@ -251,6 +311,10 @@ namespace CasseroleX.Infrastructure.Migrations
                         .HasDefaultValueSql("'local'")
                         .HasComment("存储位置");
 
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasComment("更新时间");
+
                     b.Property<DateTime?>("UploadTime")
                         .HasColumnType("datetime(6)")
                         .HasComment("上传时间");
@@ -268,7 +332,99 @@ namespace CasseroleX.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Attachment");
+                    b.ToTable("Attachments");
+                });
+
+            modelBuilder.Entity("CasseroleX.Domain.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasComment("创建时间");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasDefaultValueSql("''")
+                        .HasComment("描述");
+
+                    b.Property<string>("DiyName")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)")
+                        .HasDefaultValueSql("''")
+                        .HasComment("自定义名称");
+
+                    b.Property<string>("Image")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasDefaultValueSql("''")
+                        .HasComment("图片");
+
+                    b.Property<string>("Keywords")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasDefaultValueSql("''")
+                        .HasComment("关键字");
+
+                    b.Property<int>("LastModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)")
+                        .HasDefaultValueSql("''");
+
+                    b.Property<string>("NickName")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasDefaultValueSql("''");
+
+                    b.Property<int>("Pid")
+                        .HasColumnType("int")
+                        .HasComment("父ID");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasComment("状态");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)")
+                        .HasColumnName("type")
+                        .HasComment("栏目类型");
+
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasComment("更新时间");
+
+                    b.Property<int>("Weigh")
+                        .HasColumnType("int")
+                        .HasComment("权重");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Pid");
+
+                    b.HasIndex("Weigh", "Id");
+
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("CasseroleX.Domain.Entities.Ems", b =>
@@ -288,7 +444,7 @@ namespace CasseroleX.Infrastructure.Migrations
                     b.Property<DateTime>("CreateTime")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2023, 6, 3, 16, 33, 28, 730, DateTimeKind.Local).AddTicks(1935))
+                        .HasDefaultValue(new DateTime(2023, 8, 8, 11, 18, 8, 284, DateTimeKind.Local).AddTicks(3141))
                         .HasComment("创建时间");
 
                     b.Property<string>("Email")
@@ -368,10 +524,6 @@ namespace CasseroleX.Infrastructure.Migrations
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasComment("更新时间");
-
                     b.Property<int>("LastModifiedBy")
                         .HasColumnType("int");
 
@@ -398,6 +550,10 @@ namespace CasseroleX.Infrastructure.Migrations
                         .HasDefaultValue(0)
                         .HasComment("状态");
 
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasComment("更新时间");
+
                     b.HasKey("Id");
 
                     b.ToTable("Roles", (string)null);
@@ -408,7 +564,6 @@ namespace CasseroleX.Infrastructure.Migrations
                             Id = 1,
                             CreateTime = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
                             CreatedBy = 0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = 0,
                             Name = "Admin group",
                             Pid = 0,
@@ -420,7 +575,6 @@ namespace CasseroleX.Infrastructure.Migrations
                             Id = 2,
                             CreateTime = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
                             CreatedBy = 0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = 0,
                             Name = "Second group",
                             Pid = 1,
@@ -432,7 +586,6 @@ namespace CasseroleX.Infrastructure.Migrations
                             Id = 3,
                             CreateTime = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
                             CreatedBy = 0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = 0,
                             Name = "Third group",
                             Pid = 2,
@@ -444,7 +597,6 @@ namespace CasseroleX.Infrastructure.Migrations
                             Id = 4,
                             CreateTime = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
                             CreatedBy = 0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = 0,
                             Name = "Second group 2",
                             Pid = 1,
@@ -456,7 +608,6 @@ namespace CasseroleX.Infrastructure.Migrations
                             Id = 5,
                             CreateTime = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
                             CreatedBy = 0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = 0,
                             Name = "Third group 2",
                             Pid = 2,
@@ -499,13 +650,9 @@ namespace CasseroleX.Infrastructure.Migrations
                         .HasDefaultValueSql("''")
                         .HasComment("图标");
 
-                    b.Property<byte>("IsMenu")
-                        .HasColumnType("tinyint unsigned")
+                    b.Property<bool>("IsMenu")
+                        .HasColumnType("tinyint(1)")
                         .HasComment("是否为菜单");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasComment("更新时间");
 
                     b.Property<int>("LastModifiedBy")
                         .HasColumnType("int");
@@ -515,6 +662,7 @@ namespace CasseroleX.Infrastructure.Migrations
                         .HasComment("菜单类型");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)")
@@ -567,6 +715,10 @@ namespace CasseroleX.Infrastructure.Migrations
                         .HasDefaultValueSql("'file'")
                         .HasComment("menu为菜单,file为权限节点");
 
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasComment("更新时间");
+
                     b.Property<string>("Url")
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
@@ -598,8 +750,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-dashboard",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = true,
                             LastModifiedBy = 0,
                             Name = "dashboard",
                             Pid = 0,
@@ -620,8 +771,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-cogs",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = true,
                             LastModifiedBy = 0,
                             Name = "general",
                             Pid = 0,
@@ -642,8 +792,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-leaf",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "category",
                             Pid = 0,
@@ -658,36 +807,13 @@ namespace CasseroleX.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 4,
-                            Condition = "",
-                            CreateTime = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0,
-                            Extend = "",
-                            Icon = "fa fa-rocket",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
-                            LastModifiedBy = 0,
-                            Name = "addon",
-                            Pid = 0,
-                            PinYin = "chajianguanli",
-                            Py = "cjgl",
-                            Remark = "Addon tips",
-                            Status = 0,
-                            Title = "Addon",
-                            Type = "file",
-                            Url = "",
-                            Weigh = 0
-                        },
-                        new
-                        {
                             Id = 5,
                             Condition = "",
                             CreateTime = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-group",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = true,
                             LastModifiedBy = 0,
                             Name = "auth",
                             Pid = 0,
@@ -708,8 +834,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-cog",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = true,
                             LastModifiedBy = 0,
                             Name = "general/config",
                             Pid = 2,
@@ -730,8 +855,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-file-image-o",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = true,
                             LastModifiedBy = 0,
                             Name = "general/attachment",
                             Pid = 2,
@@ -752,8 +876,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-user",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = true,
                             LastModifiedBy = 0,
                             Name = "general/profile",
                             Pid = 2,
@@ -774,8 +897,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-user",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = true,
                             LastModifiedBy = 0,
                             Name = "auth/admin",
                             Pid = 5,
@@ -796,8 +918,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-list-alt",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = true,
                             LastModifiedBy = 0,
                             Name = "auth/adminlog",
                             Pid = 5,
@@ -818,16 +939,15 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-group",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = true,
                             LastModifiedBy = 0,
-                            Name = "auth/group",
+                            Name = "auth/role",
                             Pid = 5,
                             PinYin = "juesezu",
                             Py = "jsz",
-                            Remark = "Group tips",
+                            Remark = "Role tips",
                             Status = 0,
-                            Title = "Group",
+                            Title = "Role",
                             Type = "file",
                             Url = "",
                             Weigh = 109
@@ -840,16 +960,15 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-bars",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = true,
                             LastModifiedBy = 0,
-                            Name = "auth/rule",
+                            Name = "auth/menu",
                             Pid = 5,
                             PinYin = "caidanguize",
                             Py = "cdgz",
-                            Remark = "Rule tips",
+                            Remark = "Menu tips",
                             Status = 0,
-                            Title = "Rule",
+                            Title = "Menu",
                             Type = "file",
                             Url = "",
                             Weigh = 104
@@ -862,8 +981,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "dashboard/index",
                             Pid = 1,
@@ -884,8 +1002,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "dashboard/add",
                             Pid = 1,
@@ -906,8 +1023,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "dashboard/del",
                             Pid = 1,
@@ -928,8 +1044,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "dashboard/edit",
                             Pid = 1,
@@ -950,8 +1065,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "dashboard/multi",
                             Pid = 1,
@@ -972,8 +1086,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/config/index",
                             Pid = 6,
@@ -994,8 +1107,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/config/add",
                             Pid = 6,
@@ -1016,8 +1128,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/config/edit",
                             Pid = 6,
@@ -1038,8 +1149,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/config/del",
                             Pid = 6,
@@ -1060,8 +1170,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/config/multi",
                             Pid = 6,
@@ -1082,8 +1191,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/attachment/index",
                             Pid = 7,
@@ -1104,8 +1212,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/attachment/select",
                             Pid = 7,
@@ -1126,8 +1233,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/attachment/add",
                             Pid = 7,
@@ -1148,8 +1254,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/attachment/edit",
                             Pid = 7,
@@ -1170,8 +1275,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/attachment/del",
                             Pid = 7,
@@ -1192,8 +1296,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/attachment/multi",
                             Pid = 7,
@@ -1214,8 +1317,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/profile/index",
                             Pid = 8,
@@ -1236,8 +1338,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/profile/update",
                             Pid = 8,
@@ -1258,8 +1359,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/profile/add",
                             Pid = 8,
@@ -1280,8 +1380,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/profile/edit",
                             Pid = 8,
@@ -1302,8 +1401,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/profile/del",
                             Pid = 8,
@@ -1324,8 +1422,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "general/profile/multi",
                             Pid = 8,
@@ -1346,8 +1443,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "category/index",
                             Pid = 3,
@@ -1368,8 +1464,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "category/add",
                             Pid = 3,
@@ -1390,8 +1485,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "category/edit",
                             Pid = 3,
@@ -1412,8 +1506,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "category/del",
                             Pid = 3,
@@ -1434,8 +1527,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "category/multi",
                             Pid = 3,
@@ -1456,8 +1548,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "auth/admin/index",
                             Pid = 9,
@@ -1478,8 +1569,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "auth/admin/add",
                             Pid = 9,
@@ -1500,8 +1590,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "auth/admin/edit",
                             Pid = 9,
@@ -1522,8 +1611,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "auth/admin/del",
                             Pid = 9,
@@ -1544,8 +1632,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "auth/adminlog/index",
                             Pid = 10,
@@ -1566,8 +1653,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "auth/adminlog/detail",
                             Pid = 10,
@@ -1588,8 +1674,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "auth/adminlog/del",
                             Pid = 10,
@@ -1610,14 +1695,13 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
-                            Name = "auth/group/index",
+                            Name = "auth/role/index",
                             Pid = 11,
                             PinYin = "",
                             Py = "",
-                            Remark = "Group tips",
+                            Remark = "Role tips",
                             Status = 0,
                             Title = "View",
                             Type = "file",
@@ -1632,10 +1716,9 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
-                            Name = "auth/group/add",
+                            Name = "auth/role/add",
                             Pid = 11,
                             PinYin = "",
                             Py = "",
@@ -1654,10 +1737,9 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
-                            Name = "auth/group/edit",
+                            Name = "auth/role/edit",
                             Pid = 11,
                             PinYin = "",
                             Py = "",
@@ -1676,10 +1758,9 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
-                            Name = "auth/group/del",
+                            Name = "auth/role/del",
                             Pid = 11,
                             PinYin = "",
                             Py = "",
@@ -1698,14 +1779,13 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
-                            Name = "auth/rule/index",
+                            Name = "auth/menu/index",
                             Pid = 12,
                             PinYin = "",
                             Py = "",
-                            Remark = "Rule tips",
+                            Remark = "Menu tips",
                             Status = 0,
                             Title = "View",
                             Type = "file",
@@ -1720,10 +1800,9 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
-                            Name = "auth/rule/add",
+                            Name = "auth/menu/add",
                             Pid = 12,
                             PinYin = "",
                             Py = "",
@@ -1742,10 +1821,9 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
-                            Name = "auth/rule/edit",
+                            Name = "auth/menu/edit",
                             Pid = 12,
                             PinYin = "",
                             Py = "",
@@ -1764,10 +1842,9 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
-                            Name = "auth/rule/del",
+                            Name = "auth/menu/del",
                             Pid = 12,
                             PinYin = "",
                             Py = "",
@@ -1786,8 +1863,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "addon/index",
                             Pid = 4,
@@ -1808,8 +1884,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "addon/add",
                             Pid = 4,
@@ -1830,8 +1905,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "addon/edit",
                             Pid = 4,
@@ -1852,8 +1926,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "addon/del",
                             Pid = 4,
@@ -1874,8 +1947,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "addon/downloaded",
                             Pid = 4,
@@ -1896,8 +1968,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "addon/state",
                             Pid = 4,
@@ -1918,8 +1989,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "addon/config",
                             Pid = 4,
@@ -1940,8 +2010,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "addon/refresh",
                             Pid = 4,
@@ -1962,8 +2031,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "addon/multi",
                             Pid = 4,
@@ -1984,8 +2052,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-user-circle",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = true,
                             LastModifiedBy = 0,
                             Name = "user",
                             Pid = 0,
@@ -2006,8 +2073,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-user",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = true,
                             LastModifiedBy = 0,
                             Name = "user/user",
                             Pid = 66,
@@ -2028,8 +2094,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/user/index",
                             Pid = 67,
@@ -2050,8 +2115,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/user/edit",
                             Pid = 67,
@@ -2072,8 +2136,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/user/add",
                             Pid = 67,
@@ -2094,8 +2157,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/user/del",
                             Pid = 67,
@@ -2116,8 +2178,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/user/multi",
                             Pid = 67,
@@ -2138,8 +2199,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-users",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = true,
                             LastModifiedBy = 0,
                             Name = "user/group",
                             Pid = 66,
@@ -2160,8 +2220,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/group/add",
                             Pid = 73,
@@ -2182,8 +2241,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/group/edit",
                             Pid = 73,
@@ -2204,8 +2262,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/group/index",
                             Pid = 73,
@@ -2226,8 +2283,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/group/del",
                             Pid = 73,
@@ -2248,8 +2304,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/group/multi",
                             Pid = 73,
@@ -2270,8 +2325,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)1,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = true,
                             LastModifiedBy = 0,
                             Name = "user/rule",
                             Pid = 66,
@@ -2292,8 +2346,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/rule/index",
                             Pid = 79,
@@ -2314,8 +2367,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/rule/del",
                             Pid = 79,
@@ -2336,8 +2388,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/rule/add",
                             Pid = 79,
@@ -2358,8 +2409,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/rule/edit",
                             Pid = 79,
@@ -2380,8 +2430,7 @@ namespace CasseroleX.Infrastructure.Migrations
                             CreatedBy = 0,
                             Extend = "",
                             Icon = "fa fa-circle-o",
-                            IsMenu = (byte)0,
-                            LastModified = new DateTime(2022, 10, 1, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            IsMenu = false,
                             LastModifiedBy = 0,
                             Name = "user/rule/multi",
                             Pid = 79,
@@ -2420,9 +2469,6 @@ namespace CasseroleX.Infrastructure.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("varchar(30)");
 
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<int>("LastModifiedBy")
                         .HasColumnType("int");
 
@@ -2447,6 +2493,9 @@ namespace CasseroleX.Infrastructure.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("varchar(30)");
 
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Value")
                         .HasColumnType("longtext");
 
@@ -2457,6 +2506,530 @@ namespace CasseroleX.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SiteConfigurations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "System",
+                            LastModifiedBy = 1,
+                            Name = "name",
+                            Rule = "required",
+                            Tip = "",
+                            Title = "Site name",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 56, 49, 0, DateTimeKind.Unspecified),
+                            Value = "CasseroleX",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "System",
+                            LastModifiedBy = 1,
+                            Name = "PUBLIC",
+                            Rule = "",
+                            Tip = "site path default ''",
+                            Title = "PUBLIC",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 56, 49, 0, DateTimeKind.Unspecified),
+                            Value = "",
+                            Visible = "hidden"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "System",
+                            LastModifiedBy = 1,
+                            Name = "cdn",
+                            Rule = "",
+                            Tip = "Default site url",
+                            Title = "Cdn url",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 56, 49, 0, DateTimeKind.Unspecified),
+                            Value = "https://localhost:7029",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "System",
+                            LastModifiedBy = 1,
+                            Name = "version",
+                            Rule = "required",
+                            Tip = "Set after static resource change",
+                            Title = "Version",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 56, 49, 0, DateTimeKind.Unspecified),
+                            Value = "1.0.1",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "System",
+                            LastModifiedBy = 1,
+                            Name = "timezone",
+                            Rule = "required",
+                            Tip = "",
+                            Title = "Timezone",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 56, 49, 0, DateTimeKind.Unspecified),
+                            Value = "Asia/Shanghai",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "System",
+                            LastModifiedBy = 1,
+                            Name = "forbiddenip",
+                            Rule = "",
+                            Tip = "Record by Record",
+                            Title = "Forbidden ip",
+                            Type = "text",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 56, 49, 0, DateTimeKind.Unspecified),
+                            Value = "",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "System",
+                            LastModifiedBy = 1,
+                            Name = "language",
+                            Rule = "required",
+                            Tip = "",
+                            Title = "Language",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 56, 49, 0, DateTimeKind.Unspecified),
+                            Value = "en",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "System",
+                            LastModifiedBy = 1,
+                            Name = "fixedpage",
+                            Rule = "required",
+                            Tip = "Enter the link in the left menu bar",
+                            Title = "Fixed page",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 56, 49, 0, DateTimeKind.Unspecified),
+                            Value = "dashboard",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "System",
+                            LastModifiedBy = 1,
+                            Name = "categorytype",
+                            Rule = "",
+                            Tip = "",
+                            Title = "Category type",
+                            Type = "array",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 56, 49, 0, DateTimeKind.Unspecified),
+                            Value = "{\"default\":\"Default\",\"page\":\"Page\",\"article\":\"Article\",\"test\":\"Test\"}",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "System",
+                            LastModifiedBy = 1,
+                            Name = "configgroup",
+                            Rule = "",
+                            Tip = "",
+                            Title = "Config group",
+                            Type = "array",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 56, 49, 0, DateTimeKind.Unspecified),
+                            Value = "{\"system\":\"System\",\"sms\":\"Sms\",\"email\":\"Email\",\"upload\":\"Upload\",\"account\":\"Account\",\"example\":\"Example\"}",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Upload",
+                            LastModifiedBy = 1,
+                            Name = "attachmentcategory",
+                            Rule = "",
+                            Tip = "",
+                            Title = "Attachment category",
+                            Type = "array",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 16, 45, 0, DateTimeKind.Unspecified),
+                            Value = "{\"avatar\":\"Avatar\",\"product\":\"Product\",\"custom\":\"Custom\",\"unclassified\":\"Unclassified\"}",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Content = "[\"Select\",\"SMTP\"]",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Email",
+                            LastModifiedBy = 1,
+                            Name = "mail_type",
+                            Rule = "",
+                            Tip = "",
+                            Title = "Mail type",
+                            Type = "select",
+                            UpdateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            Value = "1",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Email",
+                            LastModifiedBy = 1,
+                            Name = "mail_smtp_host",
+                            Rule = "",
+                            Tip = "",
+                            Title = "Mail smtp host",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            Value = "smtp.qq.com",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Email",
+                            LastModifiedBy = 1,
+                            Name = "mail_smtp_port",
+                            Rule = "",
+                            Tip = "Default 25,SSL 465,TLS 587 ",
+                            Title = "Mail smtp port",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            Value = "465",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Email",
+                            LastModifiedBy = 1,
+                            Name = "mail_smtp_user",
+                            Rule = "",
+                            Tip = " ",
+                            Title = "Mail smtp user",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            Value = "10000",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Email",
+                            LastModifiedBy = 1,
+                            Name = "mail_smtp_pass",
+                            Rule = "",
+                            Tip = "Password or authorization code",
+                            Title = "Mail smtp password",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            Value = "password",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Content = "[\"None\",\"TLS\",\"SSL\"]",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Email",
+                            LastModifiedBy = 1,
+                            Name = "mail_verify_type",
+                            Rule = "",
+                            Tip = "SMTP authentication method",
+                            Title = "Mail vertify type",
+                            Type = "select",
+                            UpdateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            Value = "2",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Email",
+                            LastModifiedBy = 1,
+                            Name = "mail_from",
+                            Rule = "",
+                            Tip = "",
+                            Title = "Mail from",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 7, 26, 9, 8, 27, 0, DateTimeKind.Unspecified),
+                            Value = "10000@gmail.com",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 8, 1, 9, 18, 22, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Upload",
+                            LastModifiedBy = 1,
+                            Name = "UploadUrl",
+                            Rule = "Required",
+                            Tip = "",
+                            Title = "Upload Url",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 18, 22, 0, DateTimeKind.Unspecified),
+                            Value = "general/attachment/upload",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 8, 1, 9, 34, 26, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Upload",
+                            LastModifiedBy = 1,
+                            Name = "SaveKey",
+                            Rule = "",
+                            Tip = "Path for saving attachments",
+                            Title = "Save Path",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 34, 26, 0, DateTimeKind.Unspecified),
+                            Value = "/uploads/{year}{mon}{day}/{filemd5}{.suffix}",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 8, 1, 9, 36, 34, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Upload",
+                            LastModifiedBy = 1,
+                            Name = "MaxSize",
+                            Rule = "Required",
+                            Tip = "",
+                            Title = "Max Size",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 36, 34, 0, DateTimeKind.Unspecified),
+                            Value = "10mb",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 8, 1, 9, 38, 20, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Upload",
+                            LastModifiedBy = 1,
+                            Name = "MimeType",
+                            Rule = "Required",
+                            Tip = "Type of uploaded attachment",
+                            Title = "Mime Type",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 38, 20, 0, DateTimeKind.Unspecified),
+                            Value = "jpg,png,bmp,jpeg,gif,webp,zip,rar,xls,xlsx,wav,mp4,mp3,pdf",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 8, 1, 9, 39, 38, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Upload",
+                            LastModifiedBy = 1,
+                            Name = "MaximumImageSize",
+                            Rule = "Digits",
+                            Tip = "Automatically cut out of size",
+                            Title = "Auto Crop",
+                            Type = "number",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 39, 38, 0, DateTimeKind.Unspecified),
+                            Value = "2000",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 8, 1, 9, 40, 22, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Upload",
+                            LastModifiedBy = 1,
+                            Name = "DefaultImageQuality",
+                            Rule = "Digits",
+                            Tip = "",
+                            Title = "Image Quality",
+                            Type = "number",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 40, 22, 0, DateTimeKind.Unspecified),
+                            Value = "70",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 8, 1, 9, 46, 39, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Account",
+                            LastModifiedBy = 1,
+                            Name = "LoginFailureLock",
+                            Rule = "",
+                            Tip = "Login failure lock",
+                            Title = "Login Failure",
+                            Type = "switch",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 46, 39, 0, DateTimeKind.Unspecified),
+                            Value = "0",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 8, 1, 9, 47, 42, 301, DateTimeKind.Unspecified).AddTicks(400),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Account",
+                            LastModifiedBy = 1,
+                            Name = "LoginCaptcha",
+                            Rule = "",
+                            Tip = "",
+                            Title = "Login Captcha",
+                            Type = "switch",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 47, 42, 301, DateTimeKind.Unspecified).AddTicks(450),
+                            Value = "0",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 8, 1, 9, 49, 19, 81, DateTimeKind.Unspecified).AddTicks(5450),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Account",
+                            LastModifiedBy = 1,
+                            Name = "RegKeywords",
+                            Rule = "",
+                            Tip = "Comma Division",
+                            Title = "Preserve key words",
+                            Type = "text",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 49, 19, 81, DateTimeKind.Unspecified).AddTicks(5460),
+                            Value = "admin,administrator,test",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 8, 1, 9, 51, 53, 562, DateTimeKind.Unspecified).AddTicks(8810),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Sms",
+                            LastModifiedBy = 1,
+                            Name = "SmsApiUrl",
+                            Rule = "",
+                            Tip = "",
+                            Title = "Api Url",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 51, 53, 562, DateTimeKind.Unspecified).AddTicks(8820),
+                            Value = "xx.smsapi.com",
+                            Visible = ""
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Content = "",
+                            CreateTime = new DateTime(2023, 8, 1, 9, 52, 31, 604, DateTimeKind.Unspecified).AddTicks(5590),
+                            CreatedBy = 1,
+                            Extend = "",
+                            Group = "Sms",
+                            LastModifiedBy = 1,
+                            Name = "SmsSdkAppId",
+                            Rule = "Required",
+                            Tip = "",
+                            Title = "AppId",
+                            Type = "string",
+                            UpdateTime = new DateTime(2023, 8, 1, 9, 52, 31, 604, DateTimeKind.Unspecified).AddTicks(5610),
+                            Value = "xxxxxxxxxxxxxx",
+                            Visible = ""
+                        });
                 });
 
             modelBuilder.Entity("CasseroleX.Domain.Entities.Sms", b =>
@@ -2476,7 +3049,7 @@ namespace CasseroleX.Infrastructure.Migrations
                     b.Property<DateTime>("CreateTime")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2023, 6, 3, 16, 33, 28, 750, DateTimeKind.Local).AddTicks(2977))
+                        .HasDefaultValue(new DateTime(2023, 8, 8, 11, 18, 8, 287, DateTimeKind.Local).AddTicks(320))
                         .HasComment("创建时间");
 
                     b.Property<string>("Event")
@@ -2570,10 +3143,6 @@ namespace CasseroleX.Infrastructure.Migrations
                         .HasColumnType("datetime(6)")
                         .HasComment("加入时间");
 
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasComment("更新时间");
-
                     b.Property<int>("LastModifiedBy")
                         .HasColumnType("int");
 
@@ -2587,8 +3156,8 @@ namespace CasseroleX.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<byte>("LoginFailure")
-                        .HasColumnType("tinyint unsigned")
+                    b.Property<int>("LoginFailure")
+                        .HasColumnType("int")
                         .HasComment("失败次数");
 
                     b.Property<string>("LoginIp")
@@ -2683,6 +3252,10 @@ namespace CasseroleX.Infrastructure.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasComment("更新时间");
+
                     b.Property<string>("UserName")
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(32)
@@ -2694,11 +3267,129 @@ namespace CasseroleX.Infrastructure.Migrations
 
                     b.HasIndex("Email");
 
+                    b.HasIndex("GroupId");
+
                     b.HasIndex("Mobile");
 
                     b.HasIndex("UserName");
 
                     b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Avatar = "/assets/img/avatar.png",
+                            Bio = "",
+                            BirthDay = new DateTime(1962, 7, 3, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Email = "info@xxx.com",
+                            Gender = (byte)1,
+                            GroupId = 1,
+                            IdCard = "",
+                            JoinIp = "::1",
+                            JoinTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = 0,
+                            Level = 1,
+                            LockoutEnabled = false,
+                            LoginFailure = 0,
+                            LoginIp = "::1",
+                            LoginTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            MaxSuccessions = 0,
+                            Mobile = "13800138000",
+                            Money = 10m,
+                            NickName = "Tom",
+                            PasswordHash = "98692CEA72ED669009D68D0CF5B5054DA2520265",
+                            PrevTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            RealName = "Tom Cruise",
+                            RegionId = 0,
+                            RegisterIp = "::1",
+                            Salt = "123456",
+                            Score = 100,
+                            Status = 0,
+                            Successions = 0,
+                            Token = "0c2a2ca0b5b04cba996a0e3ad2144e60",
+                            TwoFactorEnabled = false,
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            UserName = "Tom88"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Avatar = "/assets/img/avatar.png",
+                            Bio = "",
+                            BirthDay = new DateTime(2005, 2, 6, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Email = "info@xxx.com",
+                            Gender = (byte)1,
+                            GroupId = 1,
+                            IdCard = "",
+                            JoinIp = "::1",
+                            JoinTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = 0,
+                            Level = 2,
+                            LockoutEnabled = false,
+                            LoginFailure = 0,
+                            LoginIp = "::1",
+                            LoginTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            MaxSuccessions = 0,
+                            Mobile = "13800138000",
+                            Money = 80m,
+                            NickName = "Jack",
+                            PasswordHash = "98692CEA72ED669009D68D0CF5B5054DA2520265",
+                            PrevTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            RealName = "Jake Brown",
+                            RegionId = 0,
+                            RegisterIp = "::1",
+                            Salt = "123456",
+                            Score = 20,
+                            Status = 0,
+                            Successions = 0,
+                            Token = "0c2a2ca0b5b04cba996a0e3ad2144e60",
+                            TwoFactorEnabled = false,
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            UserName = "JackB"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Avatar = "/assets/img/avatar.png",
+                            Bio = "",
+                            BirthDay = new DateTime(1975, 6, 4, 10, 1, 1, 0, DateTimeKind.Unspecified),
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Email = "info@xxx.com",
+                            Gender = (byte)1,
+                            GroupId = 1,
+                            IdCard = "",
+                            JoinIp = "::1",
+                            JoinTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = 0,
+                            Level = 1,
+                            LockoutEnabled = false,
+                            LoginFailure = 0,
+                            LoginIp = "::1",
+                            LoginTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            MaxSuccessions = 0,
+                            Mobile = "13800138000",
+                            Money = 30m,
+                            NickName = "Jolie",
+                            PasswordHash = "98692CEA72ED669009D68D0CF5B5054DA2520265",
+                            PrevTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            RealName = "Angelina Jolie",
+                            RegionId = 0,
+                            RegisterIp = "::1",
+                            Salt = "123456",
+                            Score = 200,
+                            Status = 0,
+                            Successions = 0,
+                            Token = "0c2a2ca0b5b04cba996a0e3ad2144e60",
+                            TwoFactorEnabled = false,
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            UserName = "Angelina"
+                        });
                 });
 
             modelBuilder.Entity("CasseroleX.Domain.Entities.UserGroup", b =>
@@ -2714,10 +3405,6 @@ namespace CasseroleX.Infrastructure.Migrations
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasComment("更新时间");
 
                     b.Property<int>("LastModifiedBy")
                         .HasColumnType("int");
@@ -2740,12 +3427,277 @@ namespace CasseroleX.Infrastructure.Migrations
                         .HasDefaultValue(0)
                         .HasComment("状态");
 
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasComment("更新时间");
+
                     b.HasKey("Id")
                         .HasName("PRIMARY");
 
                     b.ToTable("UserGroups", null, t =>
                         {
                             t.HasComment("会员组表");
+                        });
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            LastModifiedBy = 0,
+                            Name = "Test",
+                            Rules = "1,2,3,4,5,6,7,8,9,10,11,12",
+                            Status = 0,
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("CasseroleX.Domain.Entities.UserRule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasComment("创建时间");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsMenu")
+                        .HasColumnType("tinyint(1)")
+                        .HasComment("是否为菜单");
+
+                    b.Property<int>("LastModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasDefaultValueSql("''")
+                        .HasComment("组名");
+
+                    b.Property<int>("Pid")
+                        .HasColumnType("int")
+                        .HasComment("父组别");
+
+                    b.Property<string>("Remark")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasDefaultValueSql("''")
+                        .HasComment("备注");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasComment("状态");
+
+                    b.Property<string>("Title")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasDefaultValueSql("''")
+                        .HasComment("规则名称");
+
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasComment("更新时间");
+
+                    b.Property<int>("Weigh")
+                        .HasColumnType("int")
+                        .HasComment("权重");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserRules", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            IsMenu = false,
+                            LastModifiedBy = 0,
+                            Name = "index",
+                            Pid = 0,
+                            Remark = "",
+                            Status = 0,
+                            Title = "Frontend",
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            Weigh = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            IsMenu = false,
+                            LastModifiedBy = 0,
+                            Name = "api",
+                            Pid = 0,
+                            Remark = "",
+                            Status = 0,
+                            Title = "API Interface",
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            Weigh = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            IsMenu = false,
+                            LastModifiedBy = 0,
+                            Name = "user",
+                            Pid = 1,
+                            Remark = "",
+                            Status = 0,
+                            Title = "User Module",
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            Weigh = 12
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            IsMenu = false,
+                            LastModifiedBy = 0,
+                            Name = "user",
+                            Pid = 2,
+                            Remark = "",
+                            Status = 0,
+                            Title = "User Module",
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            Weigh = 11
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            IsMenu = false,
+                            LastModifiedBy = 0,
+                            Name = "index/user/login",
+                            Pid = 3,
+                            Remark = "",
+                            Status = 0,
+                            Title = "Login",
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            Weigh = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            IsMenu = false,
+                            LastModifiedBy = 0,
+                            Name = "index/user/register",
+                            Pid = 3,
+                            Remark = "",
+                            Status = 0,
+                            Title = "Register",
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            Weigh = 7
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            IsMenu = false,
+                            LastModifiedBy = 0,
+                            Name = "index/user/index",
+                            Pid = 3,
+                            Remark = "",
+                            Status = 0,
+                            Title = "User Center",
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            Weigh = 9
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            IsMenu = false,
+                            LastModifiedBy = 0,
+                            Name = "index/user/profile",
+                            Pid = 3,
+                            Remark = "",
+                            Status = 0,
+                            Title = "Profile",
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            Weigh = 4
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            IsMenu = false,
+                            LastModifiedBy = 0,
+                            Name = "api/user/login",
+                            Pid = 4,
+                            Remark = "",
+                            Status = 0,
+                            Title = "Login",
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            Weigh = 6
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            IsMenu = false,
+                            LastModifiedBy = 0,
+                            Name = "api/user/register",
+                            Pid = 4,
+                            Remark = "",
+                            Status = 0,
+                            Title = "Register",
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            Weigh = 8
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            IsMenu = false,
+                            LastModifiedBy = 0,
+                            Name = "api/user/index",
+                            Pid = 4,
+                            Remark = "",
+                            Status = 0,
+                            Title = "User Center",
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            Weigh = 10
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            IsMenu = false,
+                            LastModifiedBy = 0,
+                            Name = "api/user/profile",
+                            Pid = 4,
+                            Remark = "",
+                            Status = 0,
+                            Title = "Profile",
+                            UpdateTime = new DateTime(2023, 6, 3, 10, 0, 31, 0, DateTimeKind.Unspecified),
+                            Weigh = 3
                         });
                 });
 
@@ -2770,18 +3722,28 @@ namespace CasseroleX.Infrastructure.Migrations
 
             modelBuilder.Entity("CasseroleX.Domain.Entities.User", b =>
                 {
+                    b.HasOne("CasseroleX.Domain.Entities.UserGroup", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsOne("CasseroleX.Domain.ValueObjects.Verification", "Verification", b1 =>
                         {
                             b1.Property<int>("UserId")
                                 .HasColumnType("int");
 
                             b1.Property<bool>("Email")
+                                .ValueGeneratedOnAdd()
                                 .HasColumnType("tinyint(1)")
+                                .HasDefaultValue(false)
                                 .HasColumnName("EmailConfirm")
                                 .HasComment("邮箱验证");
 
                             b1.Property<bool>("Mobile")
+                                .ValueGeneratedOnAdd()
                                 .HasColumnType("tinyint(1)")
+                                .HasDefaultValue(false)
                                 .HasColumnName("MobileConfirm")
                                 .HasComment("手机号验证");
 
@@ -2792,6 +3754,8 @@ namespace CasseroleX.Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("UserId");
                         });
+
+                    b.Navigation("Group");
 
                     b.Navigation("Verification")
                         .IsRequired();

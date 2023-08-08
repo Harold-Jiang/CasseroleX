@@ -5,7 +5,7 @@ define(['jquery', 'bootstrap', 'dropzone', 'template'], function ($, undefined, 
             config: {
                 container: document.body,
                 classname: '.plupload:not([initialized]),.faupload:not([initialized])',
-                previewtpl: '<li class="col-xs-3"><a href="<%=fullurl%>" data-url="<%=url%>" target="_blank" class="thumbnail"><img src="<%=fullurl%>" onerror="this.src=\'' + Fast.api.fixurl("ajax/icon") + '?suffix=<%=suffix%>\';this.onerror=null;" class="img-responsive"></a><a href="javascript:;" class="btn btn-danger btn-xs btn-trash"><i class="fa fa-trash"></i></a></li>',
+                previewtpl: '<li class="col-xs-3"><a href="<%=fullurl%>" data-url="<%=url%>" target="_blank" class="thumbnail"><img src="<%=fullurl%>" onerror="this.src=\'' + Fast.api.fixurl("general/attachment/icon") + '?suffix=<%=suffix%>\';this.onerror=null;" class="img-responsive"></a><a href="javascript:;" class="btn btn-danger btn-xs btn-trash"><i class="fa fa-trash"></i></a></li>',
             },
             events: {
                 //初始化
@@ -224,6 +224,10 @@ define(['jquery', 'bootstrap', 'dropzone', 'template'], function ($, undefined, 
                             sending: function (file, xhr, formData) {
                                 if (typeof file.category !== 'undefined') {
                                     formData.append('category', file.category);
+                                }
+                                var tokenInput = $('input[name=__RequestVerificationToken]');
+                                if (tokenInput.length) { 
+                                    formData.append('__RequestVerificationToken', tokenInput.val());
                                 }
                             },
                             addedfile: function (file) {

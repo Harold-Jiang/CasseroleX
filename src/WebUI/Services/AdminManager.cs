@@ -1,9 +1,9 @@
-﻿using CasseroleX.Application.Common.Interfaces;
+﻿using CasseroleX.Application.Common.Exceptions;
+using CasseroleX.Application.Common.Interfaces;
 using CasseroleX.Application.Configurations;
 using CasseroleX.Application.Login.Commands;
 using CasseroleX.Application.Utils;
 using CasseroleX.Domain.Entities;
-using CasseroleX.Domain.Exceptions;
 using CasseroleX.Infrastructure.Authentication;
 using WebUI.Helpers;
 
@@ -28,7 +28,7 @@ public class AdminManager : UserManager,IAdminManager
     public async Task<AdminLoginResultDto> Login(AdminLoginCommand model,CancellationToken cancellationToken =default)
     {
         //获取配置项 
-        var accountConfig = await _sysConfigService.GetConfiguration<AccountConfigInfo>();
+        var accountConfig = await _sysConfigService.GetConfigurationAsync<AccountConfigInfo>();
         //检查验证码
         if (accountConfig is not null && accountConfig.LoginCaptcha)
         {

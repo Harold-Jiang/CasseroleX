@@ -1,7 +1,9 @@
 ﻿@model Result
 @inject IOptionsSnapshot<AppOptions> app
+@inject ISiteConfigurationService _sysConfigService
 @{
     Layout = null;
+    var _sysConfig = await _sysConfigService.GetConfigurationAsync<SystemConfigInfo>();
 }
 <!DOCTYPE html>
 <html>
@@ -9,7 +11,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>@Model.Msg</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="@{@app.Value.CDN}/assets/img/favicon.ico" />
+    <link rel="shortcut icon" href="@{@_sysConfig.CDN}/assets/img/favicon.ico" />
     <style type="text/css">
         * {
             box-sizing: border-box;
@@ -141,20 +143,20 @@
     }
     <div class="system-message @codeText">
         <div class="image">
-            <img src="@{@app.Value.CDN}/assets/img/@(codeText).svg" alt="" width="120" />
+            <img src="@{@_sysConfig.CDN}/assets/img/@(codeText).svg" alt="" width="120" />
         </div>
         <h1>@Model.Msg</h1>
         @if (!string.IsNullOrEmpty(Model.Url))
         {
             <p class="jump">
-                "页面将在 <span id="wait">@Model.Wait</span> 秒后自动跳转"
+                "The page will automatically jump after<span id="wait">@Model.Wait</span>seconds"
             </p>
         }
         <p class="clearfix">
-            <a href="/" class="btn btn-grey">返回首页</a>
+            <a href="/" class="btn btn-grey">Home</a>
             @if (!string.IsNullOrEmpty(Model.Url))
             {
-                <a href="@Model.Url" class="btn btn-primary">立即跳转</a>
+                <a href="@Model.Url" class="btn btn-primary">Jump</a>
             }
         </p>
     </div>

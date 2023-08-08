@@ -17,7 +17,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree'], function (
     };
     var Controller = {
         index: function () {
-            // 初始化表格参数配置
+            // Initialize Table Parameter Configuration
             Table.api.init({
                 extend: {
                     index_url: 'user/group/index',
@@ -25,13 +25,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree'], function (
                     edit_url: 'user/group/edit',
                     del_url: 'user/group/del',
                     multi_url: 'user/group/multi',
-                    table: 'user_group',
+                    table: 'usergroups',
                 }
             });
 
             var table = $("#table");
 
-            // 初始化表格
+            // Initialize Table
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pk: 'id',
@@ -49,7 +49,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree'], function (
                 ]
             });
 
-            // 为表格绑定事件
+            // Bind events for tables
             Table.api.bindevent(table);
         },
         add: function () {
@@ -63,22 +63,23 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree'], function (
                 Form.api.bindevent($("form[role=form]"), null, null, function () {
                     if ($("#treeview").length > 0) {
                         var r = $("#treeview").jstree("get_all_checked");
-                        $("input[name='row[rules]']").val(r.join(','));
+                        $("input[name='rules']").val(r.join(','));
                     }
                     return true;
                 });
-                //渲染权限节点树
-                //销毁已有的节点树
+                // Rendering Permission Node Tree
+                // After changing the level, it is necessary to rebuild the node tree
+                // Destroy existing node trees
                 $("#treeview").jstree("destroy");
                 Controller.api.rendertree(nodeData);
-                //全选和展开
+                // Select All and Expand
                 $(document).on("click", "#checkall", function () {
                     $("#treeview").jstree($(this).prop("checked") ? "check_all" : "uncheck_all");
                 });
                 $(document).on("click", "#expandall", function () {
                     $("#treeview").jstree($(this).prop("checked") ? "open_all" : "close_all");
                 });
-                $("select[name='row[pid]']").trigger("change");
+                $("select[name='pid']").trigger("change");
             },
             rendertree: function (content) {
                 $("#treeview")

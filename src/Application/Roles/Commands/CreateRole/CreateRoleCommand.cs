@@ -1,15 +1,15 @@
-﻿using CasseroleX.Application.Common.Interfaces;
+﻿using CasseroleX.Application.Common.Exceptions;
+using CasseroleX.Application.Common.Interfaces;
+using CasseroleX.Application.Common.Models;
 using CasseroleX.Application.Utils;
 using CasseroleX.Domain.Entities.Role;
 using CasseroleX.Domain.Enums;
-using CasseroleX.Domain.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CasseroleX.Application.Roles.Commands.CreateRole;
-public record CreateRoleCommand : IRequest<int>
-{
-    public int UserId { get; set; }
+public class CreateRoleCommand : IRequest<Result>
+{ 
     public int Pid { get; init; }
     public string Rules { get; init; } = null!;
     public string Name { get; set; } = null!;
@@ -17,31 +17,35 @@ public record CreateRoleCommand : IRequest<int>
 
 }
 
-public class CreateTodoItemCommandHandler : IRequestHandler<CreateRoleCommand, int>
+public class CreateTodoItemCommandHandler : IRequestHandler<CreateRoleCommand, Result>
 {
+    private readonly ICurrentUserService _currentUserService;
     private readonly IApplicationDbContext _context;
     private readonly IRoleManager _roleManager;
 
-    public CreateTodoItemCommandHandler(IApplicationDbContext context, 
-        IRoleManager roleManager)
+    public CreateTodoItemCommandHandler(IApplicationDbContext context,
+        IRoleManager roleManager,
+        ICurrentUserService currentUserService)
     {
         _context = context;
         _roleManager = roleManager;
+        _currentUserService = currentUserService;
     }
 
-    public async Task<int> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
     {
-        var rules  = request.Rules.ToIList<string>();
-        var childrenGroupIds = await _roleManager.GetChildrenRoleIds(request.UserId, true);
-        if (!childrenGroupIds.Contains(request.Pid))
+      
+        var childrenRoleIds = await _roleManager.GetChildrenRoleIds(_currentUserService.UserId, true, cancellationToken);
+        if (!childrenRoleIds.Contains(request.Pid))
         {
-            throw new JsonResultException("The parent group exceeds permission limit");
+            throw new PermissionException("父角色组超出权限限制");
         }
         var parentModel = await _context.Roles
-            .FirstOrDefaultAsync(x=>x.Id == request.Pid,cancellationToken) ?? throw new JsonResultException("The parent group can not be found");
+            .FirstOrDefaultAsync(x=>x.Id == request.Pid,cancellationToken) ?? throw new PermissionException("找不到角色组");
 
-        var parentRules = parentModel.Rules.Split(',').ToList();
-        var (currentRules,roleIds)= await _roleManager.GetRolePermissionIdsAsync(request.UserId,cancellationToken);
+        var rules = request.Rules.ToIList<string>();
+        var parentRules = parentModel.Rules.ToIList<string>();
+        var currentRules = _currentUserService.PermissionIds;
 
         rules = parentRules.Contains("*") ? rules : rules.Intersect(parentRules).ToList();
         rules = currentRules.Contains("*") ? rules : rules.Intersect(currentRules).ToList();
@@ -54,12 +58,8 @@ public class CreateTodoItemCommandHandler : IRequestHandler<CreateRoleCommand, i
             Pid = request.Pid
         };
 
-        //entity.AddDomainEvent(new RoleCreatedEvent(entity));
-
         await _context.Roles.AddAsync(entity, cancellationToken);
-
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return entity.Id;
+        var result = await _context.SaveChangesAsync(cancellationToken) > 0;
+        return result ? Result.Success(entity.Id) : Result.Failure();
     }
 }

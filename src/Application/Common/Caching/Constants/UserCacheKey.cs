@@ -1,10 +1,12 @@
 ﻿namespace CasseroleX.Application.Common.Caching.Constants;
 
 public static partial class CacheKeys
-{ 
+{
     /// <summary>
-    /// 角色权限
+    /// Role-Permission
     /// </summary>
-    public static string USER_ROLEPERMISSIONS_BY_ADMINID_KEY => "CarSale:rolepermissions:adminid-{0}";
+    public static string ADMIN_ROLEPERMISSIONS_PATH => "CasseroleX:rolepermissions:";
+
+    public static string ADMIN_ROLEPERMISSIONS_BY_ADMINID_KEY => "CasseroleX:rolepermissions:adminid-{0}";
 
 }

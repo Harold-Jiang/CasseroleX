@@ -4,6 +4,7 @@ using CasseroleX.Infrastructure.Authentication;
 using CasseroleX.Infrastructure.Authorization;
 using CasseroleX.Infrastructure.Caching;
 using CasseroleX.Infrastructure.Files;
+using CasseroleX.Infrastructure.OptionSetup;
 using CasseroleX.Infrastructure.Persistence;
 using CasseroleX.Infrastructure.Persistence.Interceptors;
 using CasseroleX.Infrastructure.Security;
@@ -20,16 +21,15 @@ public static class ConfigureServices
     {
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();
 
-
         var _connectionString = configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(_connectionString, ServerVersion.AutoDetect(_connectionString)));
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
-         
-        //身份验证
+
+        //Authentication
         services.AddCookieAuthentication(configuration);
 
-        //授权服务
+        //Authorization
         services.AddAuthorization();
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
@@ -38,15 +38,28 @@ public static class ConfigureServices
         services.AddScoped<IDateTime, DateTimeService>();
         services.AddScoped<ICustomAuthenticationService, CookieAuthenticationService>();
         services.AddScoped<ICsvFileBuilder, CsvFileBuilder>();
+        services.AddScoped<IUploadService, UploadService>();
 
-        //缓存注入
+        //Email and sms
+        services.AddScoped<IEmailSender, MessageServices>();
+        services.AddScoped<ISmsSender, MessageServices>();
+
+        //Cache
         services.ConfigureOptions<RedisOptionsSetup>();
-        services.AddStackExchangeRedisCache(options => options.Configuration = $"{configuration.GetSection("RedisOptions:RedisConnectionString").Value},defaultDatabase={configuration.GetSection("RedisOptions:RedisDatabaseId").Value}");
+        if (configuration.GetValue<bool>("RedisOptions:UseRedisCache"))
+        {
+            services.AddStackExchangeRedisCache(options => options.Configuration = $"{configuration.GetSection("RedisOptions:RedisConnectionString").Value},defaultDatabase={configuration.GetSection("RedisOptions:RedisDatabaseId").Value}");
+        }
+        else
+        {
+            services.AddDistributedMemoryCache();
+        }
         services.AddSingleton<ICacheService, CacheService>();
 
-        //安全设置注入
+        //Security
         services.ConfigureOptions<SecurityOptionsSetup>();
-
+        //App setting
+        services.ConfigureOptions<AppOptionsSetup>();
         services.AddScoped<IEncryptionService, EncryptionService>();
         return services;
     }
@@ -77,30 +90,7 @@ public static class ConfigureServices
                 : CookieSecurePolicy.SameAsRequest;
         });
 
-        ////add external authentication
-        //authenticationBuilder.AddCookie(CookieAuthenticationDefaults.ExternalAuthenticationScheme, options =>
-        //{
-        //    options.Cookie.Name = securityConfig.CookiePrefix +
-        //                          CookieAuthenticationDefaults.ExternalAuthenticationScheme;
-        //    options.Cookie.HttpOnly = true;
-        //    options.LoginPath = CookieAuthenticationDefaults.LoginPath;
-        //    options.AccessDeniedPath = CookieAuthenticationDefaults.AccessDeniedPath;
-        //    options.Cookie.SecurePolicy = securityConfig.CookieSecurePolicyAlways
-        //        ? CookieSecurePolicy.Always
-        //        : CookieSecurePolicy.SameAsRequest;
-        //});
-
-        ////register external authentication plugins now
-        //var typeSearcher = new TypeSearcher();
-        //var externalAuthConfigurations = typeSearcher.ClassesOfType<IAuthenticationBuilder>();
-        //var externalAuthInstances = externalAuthConfigurations
-        //.Where(PluginExtensions.OnlyInstalledPlugins)
-        //    .Select(x => (IAuthenticationBuilder)Activator.CreateInstance(x))
-        //    .OrderBy(x => x!.Priority);
-
-        ////add new Authentication
-        //foreach (var instance in externalAuthInstances)
-        //    instance.AddAuthentication(authenticationBuilder, configuration);
+   
     }
 
 }

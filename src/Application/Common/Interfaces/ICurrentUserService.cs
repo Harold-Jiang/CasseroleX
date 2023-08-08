@@ -6,7 +6,9 @@ public interface ICurrentUserService
 {
     int UserId { get; }
     string UserName { get; }
-    int PermissionIds { get; }
-    Task<bool> CheckPermissionAsync(string permissionName, CancellationToken cancellationToken = default);
+    bool IsSuperAdmin { get; }
+    List<int> RoleIds { get; }
+    List<string> PermissionIds { get; }
+    Task<int> CheckPermissionAsync(string permissionName, CancellationToken cancellationToken = default);
     Task<T?> GetUserAsync<T>() where T : BaseUser;
 }

@@ -9,13 +9,13 @@ public static class RegexExtensions
     {
         return latlng.preg_match(@"/^\d{1,3}\.\d{1,30}$/") ? latlng: "0";
     }
-     
+
 
     /// <summary>
-    /// 正则是否有匹配结果 忽略大小写
+    /// Does the regular rule have matching results, ignoring case
     /// </summary>
-    /// <param name='rexstr'>正则表达式</param>
-    /// <param name='value'>匹配项</param>
+    /// <param name='rexstr'>regular expression</param>
+    /// <param name='input'>Matching items</param>
     /// <returns></returns>
     public static bool preg_match(this string input ,string rexstr)
     {
@@ -28,7 +28,7 @@ public static class RegexExtensions
     /// Equivalent to PHP preg_match but only for 3 requied parameters
     /// </summary>
     /// <param name="input"></param>
-    /// <param name="regex"></param>
+    /// <param name="regexstr"></param>
     /// <param name="matches"></param>
     /// <returns></returns>
     public static bool preg_match(this string input, string regexstr, out List<string> matches)
@@ -92,6 +92,20 @@ public static class RegexExtensions
             "<=" => cmp <= 0,
             _ => throw new ArgumentException($"Invalid operator: {op}"),
         };
+    }
+
+    /// <summary>
+    /// Remove HTML tags from rich text
+    /// </summary>
+    public static string ReplaceHtmlTag(this string html, int length = 0)
+    {
+        string strText = Regex.Replace(html, "<[^>]+>", "");
+        strText = Regex.Replace(strText, "&[^;]+;", "");
+
+        if (length > 0 && strText.Length > length)
+            return strText[..length];
+
+        return strText;
     }
 
 }

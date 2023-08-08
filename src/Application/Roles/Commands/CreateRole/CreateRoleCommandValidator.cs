@@ -1,15 +1,27 @@
-﻿using FluentValidation;
+﻿using CasseroleX.Application.Common.Interfaces;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace CasseroleX.Application.Roles.Commands.CreateRole;
 public class CreateRoleCommandValidator : AbstractValidator<CreateRoleCommand>
 {
-    public CreateRoleCommandValidator()
+    private readonly IApplicationDbContext _context;
+    public CreateRoleCommandValidator(IApplicationDbContext context)
     {
+        _context = context;
+
         RuleFor(v => v.Rules)
-            .MaximumLength(200)
             .NotEmpty();
+
         RuleFor(v => v.Name)
-            .MaximumLength(50)
-            .NotEmpty();
+            .NotEmpty()
+            .MinimumLength(3)
+            .MaximumLength(20)
+            .MustAsync(NameExists).WithMessage("Name already exists"); 
+    }
+
+    private async Task<bool> NameExists(string name, CancellationToken cancellationToken = default)
+    {
+        return await _context.Roles.CountAsync(a => a.Name == name, cancellationToken) == 0;
     }
 }

@@ -60,7 +60,10 @@ define(['jquery', 'bootstrap', 'toastr', 'layer', 'lang'], function ($, undefine
         api: {
             //发送Ajax请求
             ajax: function (options, success, error) {
-                options = typeof options === 'string' ? {url: options} : options;
+                options = typeof options === 'string' ? { url: options } : options;
+                if (options.type != 'GET') {
+                    options.data = Fast.api.addantiforgerytoken(options.data);
+                } 
                 var index;
                 if (typeof options.loading === 'undefined' || options.loading) {
                     index = Layer.load(options.loading || 0);
@@ -87,6 +90,16 @@ define(['jquery', 'bootstrap', 'toastr', 'layer', 'lang'], function ($, undefine
                     }
                 }, options);
                 return $.ajax(options);
+            },
+            addantiforgerytoken: function (data) {
+                if (!data) {
+                    data = {};
+                }
+                var tokenInput = $('input[name=__RequestVerificationToken]');
+                if (tokenInput.length) {
+                    data.__RequestVerificationToken = tokenInput.val();
+                }
+                return data;
             },
             //修复URL
             fixurl: function (url) {

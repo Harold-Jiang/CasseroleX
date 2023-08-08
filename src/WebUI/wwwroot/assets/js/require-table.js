@@ -60,7 +60,7 @@ define(['jquery', 'bootstrap'], function ($, undefined) {
                 del_url: '',
                 import_url: '',
                 multi_url: '',
-                dragsort_url: 'ajax/weigh',
+                dragsort_url: '',
             }
         },
         // Bootstrap-table 列配置
@@ -669,7 +669,7 @@ define(['jquery', 'bootstrap'], function ($, undefined) {
                         value = Fast.api.cdnurl(value, true);
                         suffix = /[\.]?([a-zA-Z0-9]+)$/.exec(value);
                         suffix = suffix ? suffix[1] : 'file';
-                        url = Fast.api.fixurl("ajax/icon?suffix=" + suffix);
+                        url = Fast.api.fixurl("general/attachment/icon?suffix=" + suffix);
                         html.push('<a href="' + value + '" target="_blank"><img src="' + url + '" class="' + classname + '" width="30" height="30"></a>');
                     });
                     return html.join(' ');

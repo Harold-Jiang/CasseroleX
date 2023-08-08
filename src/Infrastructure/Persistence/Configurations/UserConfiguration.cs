@@ -95,18 +95,19 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasDefaultValueSql("''")
             .HasComment("用户名");
 
-        b.OwnsOne(o => o.Verification)
-            .Property(p => p.Mobile).HasColumnName("MobileConfirm")
-            .HasComment("手机号验证");
-        b.OwnsOne(o => o.Verification)
-            .Property(p => p.Email).HasColumnName("EmailConfirm")
-            .HasComment("邮箱验证");
+        b.OwnsOne(u => u.Verification, v =>
+        {
+            v.Property(p => p.Mobile).HasColumnName("MobileConfirm").HasDefaultValue(false).HasComment("手机号验证");
+            v.Property(p => p.Email).HasColumnName("EmailConfirm").HasDefaultValue(false).HasComment("邮箱验证");
+        }); 
 
-        
+    
         b.Property(e => e.CreateTime)
           .HasComment("创建时间");
-        b.Property(e => e.LastModified)
+        b.Property(e => e.UpdateTime)
             .HasComment("更新时间");
-         
+
+
+        b.HasOne(x => x.Group).WithMany().HasForeignKey(x => x.GroupId).IsRequired();
     }
 }

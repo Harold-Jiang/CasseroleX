@@ -21,20 +21,23 @@ public class CurrentUserService : ICurrentUserService
     }
 
     public int UserId => (_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier)).ToInt();
+
     public string UserName => (_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name))?.ToString() ?? "";
-    public int PermissionIds => (_httpContextAccessor.HttpContext?.User?.FindFirstValue(AuthExtensions.RolePermissonIds)).ToInt();
 
-    //public string Roles => (_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Role))?.ToString()??"";
+    public List<string> PermissionIds => (_httpContextAccessor.HttpContext?.User?.FindFirstValue(AuthExtensions.RolePermissonIds)).ToIList<string>();
 
-   
+    public List<int> RoleIds => (_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Role)).ToIList<int>();
+
+    public bool IsSuperAdmin => this.PermissionIds.Contains("*");
+
     public async Task<T?> GetUserAsync<T>() where T : BaseUser
     {
         var user = await _authenticationService.GetAuthenticatedUser<T>();
         return user as T;
     }
 
-    public async Task<bool> CheckPermissionAsync(string permissionName,CancellationToken cancellationToken =default)
+    public async Task<int> CheckPermissionAsync(string permissionName, CancellationToken cancellationToken = default)
     {
-        return await _roleManager.CheckPermissionAsync(this.UserId, permissionName,cancellationToken);
+        return await _roleManager.CheckPermissionAsync(this.UserId, permissionName, cancellationToken) ? 1 : 0;
     }
 }

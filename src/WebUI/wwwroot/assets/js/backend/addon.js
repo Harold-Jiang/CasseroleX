@@ -1,7 +1,7 @@
 define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template'], function ($, undefined, Backend, Table, Form, Template) {
     var Controller = {
         index: function () {
-            // 初始化表格参数配置
+            // Initialize Table Parameter Configuration
             Table.api.init({
                 extend: {
                     index_url: Config.api_url ? Config.api_url + '/addon/index' : "addon/downloaded",
@@ -80,7 +80,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template'], function
                 };
             });
 
-            // 初始化表格
+            // Initialize Table
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pageSize: 50,
@@ -177,7 +177,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template'], function
                 searchFormTemplate: 'searchformtpl',
             });
 
-            // 为表格绑定事件
+            // Bind events for tables
             Table.api.bindevent(table);
 
             // 离线安装

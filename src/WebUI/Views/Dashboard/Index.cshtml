@@ -1,4 +1,6 @@
-﻿@inject IOptionsSnapshot<AppOptions> app 
+﻿@using CasseroleX.Application.DashBoard.Queries;
+@inject IOptionsSnapshot<AppOptions> app 
+@model DashBoardDto
 <style type="text/css">
     .sm-st {
         background: #fff;
@@ -29,11 +31,11 @@
         padding-top: 2px;
     }
 
-    .sm-st-info span {
-        display: block;
-        font-size: 24px;
-        font-weight: 600;
-    }
+        .sm-st-info span {
+            display: block;
+            font-size: 24px;
+            font-weight: 600;
+        }
 
     .orange {
         background: #fa8564 !important;
@@ -56,11 +58,9 @@
     }
 
     .stat-elem {
-
         background-color: #fff;
         padding: 18px;
         border-radius: 40px;
-
     }
 
     .stat-info {
@@ -112,28 +112,29 @@
         display: inline-block;
     }
 
-    .stat .value {
-        font-size: 20px;
-        line-height: 24px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-weight: 500;
-    }
+        .stat .value {
+            font-size: 20px;
+            line-height: 24px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
+        }
 
-    .stat .name {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        margin: 5px 0;
-    }
+        .stat .name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 5px 0;
+        }
 
-    .stat.lg .value {
-        font-size: 26px;
-        line-height: 28px;
-    }
+        .stat.lg .value {
+            font-size: 26px;
+            line-height: 28px;
+        }
 
     .stat-col {
-        margin:0 0 10px 0;
+        margin: 0 0 10px 0;
     }
+
     .stat.lg .name {
         font-size: 16px;
     }
@@ -156,17 +157,256 @@
         min-height: 150px;
     }
 
-    #statistics .panel h5 {
-        font-size: 14px;
-    }
+        #statistics .panel h5 {
+            font-size: 14px;
+        }
 </style>
 <div class="panel panel-default panel-intro">
     <div class="panel-heading">
-        {:build_heading(null, false)}
+        @await Component.InvokeAsync("BuildHeading")
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#one" data-toggle="tab">{:__('Dashboard')}</a></li>
-            <li><a href="#two" data-toggle="tab">{:__('Custom')}</a></li>
+            <li class="active"><a href="#one" data-toggle="tab">Dashboard</a></li>
+            <li><a href="#two" data-toggle="tab">Custom</a></li>
         </ul>
     </div>
-   
+    <div class="panel-body">
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade active in" id="one">
+
+                <div class="row">
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="sm-st clearfix">
+                            <span class="sm-st-icon st-red"><i class="fa fa-users"></i></span>
+                            <div class="sm-st-info">
+                                <span>@Model.TotalUser</span>
+                                Total user
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="sm-st clearfix">
+                            <span class="sm-st-icon st-violet"><i class="fa fa-magic"></i></span>
+                            <div class="sm-st-info">
+                                <span>@Model.TotalAddon</span>
+                                Total addon
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="sm-st clearfix">
+                            <span class="sm-st-icon st-blue"><i class="fa fa-leaf"></i></span>
+                            <div class="sm-st-info">
+                                <span>@Model.AttachmentNums</span>
+                                Total attachment
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="sm-st clearfix">
+                            <span class="sm-st-icon st-green"><i class="fa fa-user"></i></span>
+                            <div class="sm-st-info">
+                                <span>@Model.TotalAdmin</span>
+                                Total admin
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div id="echart" class="btn-refresh" style="height:300px;width:100%;"></div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card sameheight-item stats">
+                            <div class="card-block">
+                                <div class="row row-sm stats-container">
+                                    <div class="col-xs-6 stat-col">
+                                        <div class="stat-icon"><i class="fa fa-rocket"></i></div>
+                                        <div class="stat">
+                                            <div class="value"> @Model.TodayUserSignup</div>
+                                            <div class="name"> Today user signup</div>
+                                        </div>
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-success" style="width: 20%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 stat-col">
+                                        <div class="stat-icon"><i class="fa fa-vcard"></i></div>
+                                        <div class="stat">
+                                            <div class="value"> @Model.TodayUserLogin</div>
+                                            <div class="name"> Today user login</div>
+                                        </div>
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-success" style="width: 20%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6  stat-col">
+                                        <div class="stat-icon"><i class="fa fa-calendar"></i></div>
+                                        <div class="stat">
+                                            <div class="value"> @Model.ThreeDNU</div>
+                                            <div class="name"> Three dnu</div>
+                                        </div>
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-success" style="width: 20%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 stat-col">
+                                        <div class="stat-icon"><i class="fa fa-calendar-plus-o"></i></div>
+                                        <div class="stat">
+                                            <div class="value"> @Model.SevenDNU</div>
+                                            <div class="name"> Seven dnu</div>
+                                        </div>
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-success" style="width: 20%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6  stat-col">
+                                        <div class="stat-icon"><i class="fa fa-user-circle"></i></div>
+                                        <div class="stat">
+                                            <div class="value"> @Model.SevenDNU</div>
+                                            <div class="name"> Seven dau</div>
+                                        </div>
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-success" style="width: 20%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6  stat-col">
+                                        <div class="stat-icon"><i class="fa fa-user-circle-o"></i></div>
+                                        <div class="stat">
+                                            <div class="value"> @Model.ThirtyDAU</div>
+                                            <div class="name"> Thirty dau</div>
+                                        </div>
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-success" style="width: 20%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:15px;" id="statistics">
+
+                    <div class="col-lg-12">
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <div class="panel bg-blue-gradient no-border">
+                            <div class="panel-body">
+                                <div class="panel-title">
+                                    <span class="label label-primary pull-right">Real time</span>
+                                    <h5>Working addon count</h5>
+                                </div>
+                                <div class="panel-content">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h1 class="no-margins">@Model.TotalWorkingAddon</h1>
+                                            <div class="font-bold">
+                                                <i class="fa fa-magic"></i>
+                                                <small>Working addon count tips</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <div class="panel bg-teal-gradient no-border">
+                            <div class="panel-body">
+                                <div class="ibox-title">
+                                    <span class="label label-primary pull-right">Real time</span>
+                                    <h5>Database count</h5>
+                                </div>
+                                <div class="ibox-content">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h1 class="no-margins">@Model.DbTableNums</h1>
+                                            <div class="font-bold">
+                                                <i class="fa fa-database"></i>
+                                                <small>Db table nums</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h1 class="no-margins">@Model.DbSize</h1>
+                                            <div class="font-bold">
+                                                <i class="fa fa-filter"></i>
+                                                <small>Database size</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6 col-md-3">
+                        <div class="panel bg-purple-gradient no-border">
+                            <div class="panel-body">
+                                <div class="ibox-title">
+                                    <span class="label label-primary pull-right">Real time</span>
+                                    <h5>Attachment count</h5>
+                                </div>
+                                <div class="ibox-content">
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h1 class="no-margins">@Model.AttachmentNums</h1>
+                                            <div class="font-bold">
+                                                <i class="fa fa-files-o"></i>
+                                                <small>Attachment nums</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h1 class="no-margins">@Model.AttachmentSize</h1>
+                                            <div class="font-bold">
+                                                <i class="fa fa-filter"></i>
+                                                <small>Attachment size</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <div class="panel bg-green-gradient no-border">
+                            <div class="panel-body">
+                                <div class="ibox-title">
+                                    <span class="label label-primary pull-right">Real time</span>
+                                    <h5>Picture count</h5>
+                                </div>
+                                <div class="ibox-content">
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h1 class="no-margins">@Model.PictureNums</h1>
+                                            <div class="font-bold">
+                                                <i class="fa fa-picture-o"></i>
+                                                <small>Picture nums</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h1 class="no-margins">@Model.PictureSize</h1>
+                                            <div class="font-bold">
+                                                <i class="fa fa-filter"></i>
+                                                <small>Picture size</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="two">
+                <div class="row">
+                    <div class="col-xs-12">
+                        Custom zone
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

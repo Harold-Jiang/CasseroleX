@@ -126,10 +126,7 @@ public class CookieAuthenticationService : ICustomAuthenticationService
         if (_httpContextAccessor.HttpContext != null)
         {
             await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults
-                .AuthenticationScheme);
-            //sign out also from other schema
-            //await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults
-            // .ExternalAuthenticationScheme);
+                .AuthenticationScheme); 
         }
     } 
 

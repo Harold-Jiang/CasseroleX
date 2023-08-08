@@ -2,7 +2,7 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
 
     var Controller = {
         index: function () {
-            // 初始化表格参数配置
+            // Initialize Table Parameter Configuration
             Table.api.init({
                 extend: {
                     index_url: 'general/attachment/index',
@@ -16,7 +16,7 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
 
             var table = $("#table");
 
-            // 初始化表格
+            // Initialize Table
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 sortName: 'id',
@@ -62,7 +62,7 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
                 ],
             });
 
-            // 绑定过滤事件
+            // Bind events for tables
             $('.filter-type ul li a', table.closest(".panel-intro")).on('click', function (e) {
                 $(this).closest("ul").find("li").removeClass("active");
                 $(this).closest("li").addClass("active");
@@ -78,10 +78,10 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
                 table.bootstrapTable('refresh', {pageNumber: 1});
             });
 
-            // 为表格绑定事件
+            // Bind events for tables
             Table.api.bindevent(table);
 
-            // 附件归类
+            // Attachment classification
             $(document).on('click', '.btn-classify', function () {
                 var ids = Table.api.selectedids(table);
                 Layer.open({
@@ -106,7 +106,7 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
 
         },
         select: function () {
-            // 初始化表格参数配置
+            // Initialize Table Parameter Configuration
             Table.api.init({
                 extend: {
                     index_url: 'general/attachment/select',
@@ -136,7 +136,7 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
                 });
             });
 
-            // 初始化表格
+            // Initialize Table
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 sortName: 'id',
@@ -177,7 +177,7 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
                 ]
             });
 
-            // 绑定过滤事件
+            // Bind events for tables
             $('.filter-type ul li a', table.closest(".panel-intro")).on('click', function (e) {
                 $(this).closest("ul").find("li").removeClass("active");
                 $(this).closest("li").addClass("active");
@@ -193,12 +193,12 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
                 table.bootstrapTable('refresh', {pageNumber: 1});
             });
 
-            // 选中多个
+            // Select multiple
             $(document).on("click", ".btn-choose-multi", function () {
                 Fast.api.close({url: urlArr.join(","), multiple: multiple});
             });
 
-            // 为表格绑定事件
+            // Bind events for tables
             Table.api.bindevent(table);
             require(['upload'], function (Upload) {
                 $("#toolbar .faupload").data("category", function (file) {
@@ -211,17 +211,16 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
             });
         },
         add: function () {
-            //上传完成后刷新父窗口
+            //Refresh the parent window after uploading is completed
             $(".faupload").data("upload-complete", function (files) {
                 setTimeout(function () {
                     window.parent.$(".btn-refresh").trigger("click");
                 }, 100);
             });
-            // 获取上传类别
+            // Obtain upload categories
             $("#faupload-third,#faupload-third-chunking").data("category", function (file) {
                 return $("#category-third").val();
-            });
-            // 获取上传类别
+            }); 
             $("#faupload-local,#faupload-local-chunking").data("category", function (file) {
                 return $("#category-local").val();
             });
@@ -238,9 +237,9 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
                 thumb: function (value, row, index) {
                     var html = '';
                     if (row.mimetype.indexOf("image") > -1) {
-                        html = '<a href="' + row.fullurl + '" target="_blank"><img src="' + row.fullurl + row.thumb_style + '" alt="" style="max-height:60px;max-width:120px"></a>';
+                        html = '<a href="' + row.fullurl + '" target="_blank"><img src="' + row.fullurl + row.thumbstyle + '" alt="" style="max-height:60px;max-width:120px"></a>';
                     } else {
-                        html = '<a href="' + row.fullurl + '" target="_blank"><img src="' + Fast.api.fixurl("ajax/icon") + "?suffix=" + row.imagetype + '" alt="" style="max-height:90px;max-width:120px"></a>';
+                        html = '<a href="' + row.fullurl + '" target="_blank"><img src="' + Fast.api.fixurl("general/attachment/icon") + "?suffix=" + row.imagetype + '" alt="" style="max-height:90px;max-width:120px"></a>';
                     }
                     return '<div style="width:120px;margin:0 auto;text-align:center;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">' + html + '</div>';
                 },

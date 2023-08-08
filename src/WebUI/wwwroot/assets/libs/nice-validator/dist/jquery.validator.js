@@ -1990,6 +1990,12 @@
                     }
                 });
             }
+            if (data.type != 'GET') {
+                var tokenInput = $('input[name=__RequestVerificationToken]');
+                if (tokenInput.length) {
+                    data.__RequestVerificationToken = tokenInput.val();
+                }
+            }
 
             data = $.param(data) + queryString;
             if (!me.must && rule.data && rule.data === data) {
@@ -2000,6 +2006,8 @@
             if (rType !== 'cors' && /^https?:/.test(url) && !~url.indexOf(location.host)) {
                 dataType = 'jsonp';
             }
+
+           
 
             // Asynchronous validation need return jqXHR objects
             return $.ajax({

@@ -19,7 +19,7 @@ public class AdminRolesConfiguration : IEntityTypeConfiguration<AdminRole>
             .HasComment("会员ID");
 
         b.HasOne(e => e.Role).WithMany().HasForeignKey(ur => ur.RoleId).IsRequired();
-        b.HasOne(e => e.Admin).WithMany().HasForeignKey(ur => ur.AdminId).IsRequired();
+        b.HasOne(e => e.Admin).WithMany().HasForeignKey(ur => ur.AdminId).IsRequired().OnDelete(DeleteBehavior.Cascade); 
 
     }
 }

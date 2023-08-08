@@ -2,5 +2,5 @@
 
 public interface ISiteConfigurationService
 {
-    Task<T> GetConfiguration<T>() where T : IConfig,new();
+    Task<T> GetConfigurationAsync<T>() where T : IConfig,new();
 }

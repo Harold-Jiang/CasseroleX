@@ -1,2 +1,6 @@
 @inject IOptionsSnapshot<AppOptions> app
-<script src="@{@app.Value.CDN}/assets/js/require@(app.Value.AppDebug?"":".min").js" data-main="@{@app.Value.CDN}/assets/js/require-backend@(app.Value.AppDebug?"":".min").js"></script>
+@inject ISiteConfigurationService _sysConfigService
+@{
+    var _sysConfig = await _sysConfigService.GetConfigurationAsync<SystemConfigInfo>();
+}
+<script src="@{@_sysConfig.CDN}/assets/js/require@(app.Value.AppDebug?"":".min").js" data-main="@{@_sysConfig.CDN}/assets/js/require-backend@(app.Value.AppDebug?"":".min").js"></script>

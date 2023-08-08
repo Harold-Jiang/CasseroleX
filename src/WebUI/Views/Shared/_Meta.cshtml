@@ -1,8 +1,10 @@
 @using System.Text.Json.Serialization;
 @using CasseroleX.Application.Common.Json;
 @using WebUI.Helpers;
-@inject IOptionsSnapshot<AppOptions> app 
+@inject IOptionsSnapshot<AppOptions> app
+@inject ISiteConfigurationService _sysConfigService
 @{
+    var _sysConfig = await _sysConfigService.GetConfigurationAsync<SystemConfigInfo>();
     var options = new JsonSerializerOptions
     {
         Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
@@ -18,14 +20,14 @@
 <meta name="referrer" content="never">
 <meta name="robots" content="noindex, nofollow">
 
-<link rel="shortcut icon" href="@{@app.Value.CDN}/assets/favicon.ico" />
+<link rel="shortcut icon" href="@{@_sysConfig.CDN}/assets/favicon.ico" />
 <!-- Loading Bootstrap -->
-<link href="@{@app.Value.CDN}/assets/css/backend.min.css" rel="stylesheet">
-<link href="@{@app.Value.CDN}/assets/css/skins/@(app.Value.AdminSkin).css" rel="stylesheet">
+<link href="@{@_sysConfig.CDN}/assets/css/backend.min.css" rel="stylesheet">
+<link href="@{@_sysConfig.CDN}/assets/css/skins/@(app.Value.AdminSkin).css" rel="stylesheet">
 <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
 <!--[if lt IE 9]>
-  <script src="@{@app.Value.CDN}/assets/js/html5shiv.js"></script>
-  <script src="@{@app.Value.CDN}/assets/js/respond.min.js"></script>
+  <script src="@{@_sysConfig.CDN}/assets/js/html5shiv.js"></script>
+  <script src="@{@_sysConfig.CDN}/assets/js/respond.min.js"></script>
 <![endif]-->
 <script type="text/javascript"> 
    var require =  {

@@ -1,65 +1,70 @@
-﻿@model MenusDto
-@inject IOptionsSnapshot<AppOptions> app 
+﻿@using System.Text.RegularExpressions;
+@using Microsoft.AspNetCore.Http.Extensions
+@model HomeMenuDto
+@inject IOptionsSnapshot<AppOptions> app
 @inject ISiteConfigurationService _sysConfigService
 @{
     Layout = null;
-    var _sysConfig = await _sysConfigService.GetConfiguration<SystemConfigInfo>();
-    var sidebar_collapse = ViewBag.SidebarCollapse is null ? 0 :( ViewBag.SidebarCollapse.ToString() == "1" ?1:0);
-} 
+    var _sysConfig = await _sysConfigService.GetConfigurationAsync<SystemConfigInfo>();
+    var sidebar_collapse = ViewBag.SidebarCollapse is null ? 0 : (ViewBag.SidebarCollapse.ToString() == "1" ? 1 : 0);
+}
 <!DOCTYPE html>
-<html lang="zh-cn">
-    <head>
-        <!-- 加载样式及META信息 -->
-        <partial name="_Meta">
-    </head>
-    <body class="hold-transition @(app.Value.AdminSkin) sidebar-mini @(sidebar_collapse > 0 ?"sidebar-collapse":"") fixed @(app.Value.MultipleTab?"multipletab":"") @(app.Value.MultipleNav?"multiplenav":"")" id="tabs">
+<html>
+<head>
+    <partial name="_Meta">
+</head>
+<body class="hold-transition @(app.Value.AdminSkin) sidebar-mini @(sidebar_collapse > 0 ?"sidebar-collapse":"") fixed @(app.Value.MultipleTab?"multipletab":"") @(app.Value.MultipleNav?"multiplenav":"")" id="tabs">
 
-        <div class="wrapper">
+    <div class="wrapper">
+        @Html.AntiForgeryToken()
 
-            <!-- 头部区域 -->
-            <header id="header" class="main-header">
-                
-                @*<div class="alert alert-danger-light text-center" style="margin-bottom:0;border:none;">
-                   <i class="fa fa-warning"></i> 安全提示：为了你的后台安全，请勿将后台管理入口设置为admin
-                </div> *@
+        <!-- header -->
+        <header id="header" class="main-header">
 
-                <partial name="_Header">
-            </header>
+            @if (Regex.IsMatch(ViewContext.HttpContext.Request.GetDisplayUrl(), @"^(https?:\/\/[^\/:]+(:\d+)?\/)?[^\/]*admin[^\/]*\/", RegexOptions.IgnoreCase))
+            {
+                <div class="alert alert-danger-light text-center" style="margin-bottom:0;border:none;">
+                    Safety tips
+                </div>
+            }
 
-            <!-- 左侧菜单栏 -->
-            <aside class="main-sidebar">
-                 <partial name="_Menu"> 
-            </aside>
+            <partial name="_Header">
+        </header>
 
-            <!-- 主体内容区域 -->
-            <div class="content-wrapper tab-content tab-addtabs">
-                @if(Model.SelectedMenu != null)
-                {
-                    <div role="tabpanel" class="tab-pane @(Model.RefererMenu!=null?"":"active")" id="con_@(Model.SelectedMenu.Id)">
-                    <iframe src="@{@Model.SelectedMenu.Name!.ToString()}?addtabs=1" width="100%''" height="100%" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling-x="no" scrolling-y="auto" allowtransparency="yes"></iframe>
-                    </div>
-                }
+        <!-- left menu -->
+        <aside class="main-sidebar">
+            <partial name="_Menu">
+        </aside>
+
+        <!-- content -->
+        <div class="content-wrapper tab-content tab-addtabs">
+            @if (Model.SelectedMenu != null)
+            {
+                <div role="tabpanel" class="tab-pane @(Model.RefererMenu!=null?"":"active")" id="con_@(Model.SelectedMenu.Id)">
+                    <iframe src="@{@Model.SelectedMenu.Name!.ToString()}?addtabs=1"  width="100%" height="100%" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling-x="no" scrolling-y="auto" allowtransparency="yes"></iframe>
+                </div>
+            }
             @if (Model.RefererMenu != null)
             {
-                    <div role="tabpanel" class="tab-pane active" id="con_@Model.RefererMenu.Id">
+                <div role="tabpanel" class="tab-pane active" id="con_@Model.RefererMenu.Id">
                     <iframe src="@{@Model.RefererMenu.Name!.ToString()}?addtabs=1" width="100%" height="100%" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling-x="no" scrolling-y="auto" allowtransparency="yes"></iframe>
-                    </div>
-                }
-            </div>
-
-            <!-- 底部链接,默认隐藏 -->
-            <footer class="main-footer hide">
-                <div class="pull-right hidden-xs">
                 </div>
-                <strong>Copyright &copy; 2022-@DateTime.Now.Year <a href="@app.Value.PUBLIC">@(_sysConfig.AppName)</a>.</strong> All rights reserved.
-            </footer>
-
-            <!-- 右侧控制栏 -->
-            <div class="control-sidebar-bg"></div>
-            <partial name="_Control">
+            }
         </div>
 
-        <!-- 加载JS脚本 -->
-        <partial name="_Script">
-    </body>
+        <!-- Bottom link, hidden by default -->
+        <footer class="main-footer hide">
+            <div class="pull-right hidden-xs">
+            </div>
+            <strong>Copyright &copy; 2023-@DateTime.Now.Year <a href="@_sysConfig.PUBLIC">@(_sysConfig.Name)</a>.</strong> All rights reserved.
+        </footer>
+
+        <!-- Right control bar -->
+        <div class="control-sidebar-bg"></div>
+        <partial name="_Control">
+    </div>
+
+    <!-- JS -->
+    <partial name="_Script">
+</body>
 </html>

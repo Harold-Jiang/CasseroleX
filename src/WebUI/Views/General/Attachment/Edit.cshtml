@@ -1,0 +1,93 @@
+﻿@model Attachment
+@inject ISiteConfigurationService _configService
+@{
+    var upload = await _configService.GetConfigurationAsync<UploadConfigInfo>();
+}
+<form id="edit-form" class="form-horizontal form-ajax" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label for="c-url" class="control-label col-xs-12 col-sm-2">Category:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select name="category" class="form-control">
+                <option value="">Please select category</option>
+             @foreach (var item in upload.AttachmentCategory)
+            {
+               <option value="@(item.Key)" selected="@Equals(item.Key, Model.Category)">@(item.Value)</option>
+             }
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-url" class="control-label col-xs-12 col-sm-2">Url:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input type="text" name="url" value="@Model.Url"  id="c-url" class="form-control" disabled />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-imagewidth" class="control-label col-xs-12 col-sm-2">Imagewidth:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input type="text" name="imagewidth" value="@Model.ImageWidth"  id="c-imagewidth" class="form-control" required />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-imageheight" class="control-label col-xs-12 col-sm-2">Imageheight:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input type="text" name="imageheight" value="@Model.ImageHeight" id="c-imageheight" class="form-control" required />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-imagetype" class="control-label col-xs-12 col-sm-2">Imagetype:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input type="text" name="imagetype" value="@Model.ImageType"  id="c-imagetype" class="form-control" required />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-imageframes" class="control-label col-xs-12 col-sm-2">Imageframes:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input type="number" name="imageframes" value="@Model.ImageFrames"  id="c-imageframes" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-filename" class="control-label col-xs-12 col-sm-2">Filename:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input type="text" name="filename" value="@Model.FileName"  id="c-filename" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-filesize" class="control-label col-xs-12 col-sm-2">Filesize:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input type="number" name="filesize" value="@Model.FileSize"  id="c-filesize" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-mimetype" class="control-label col-xs-12 col-sm-2">Mimetype:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input type="text" name="mimetype" value="@Model.MimeType"  id="c-mimetype" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-extparam" class="control-label col-xs-12 col-sm-2">Extparam:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input type="text" name="extparam" value="@Model.ExtParam"  id="c-extparam" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-uploadtime" class="control-label col-xs-12 col-sm-2">Uploadtime:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input type="datetime" name="uploadtime" value="@Model.UploadTime"  id="c-uploadtime" class="form-control datetimepicker" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-storage" class="control-label col-xs-12 col-sm-2">Storage:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input type="text" name="storage" value="@Model.Storage"  id="c-storage" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group hide layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-primary btn-embossed disabled">OK</button>
+            <button type="reset" class="btn btn-default btn-embossed">Reset</button>
+        </div>
+    </div>
+</form>

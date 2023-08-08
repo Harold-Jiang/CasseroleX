@@ -1,7 +1,9 @@
 ﻿@model Result 
 @inject IOptionsSnapshot<AppOptions> app
+@inject ISiteConfigurationService _sysConfigService
 @{
     Layout = null; 
+    var _sysConfig = await _sysConfigService.GetConfigurationAsync<SystemConfigInfo>();
 } 
 <!DOCTYPE html>
 <html>
@@ -10,10 +12,10 @@
     <title>@Model.Msg</title>
     <meta name="robots" content="noindex,nofollow" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <link rel="shortcut icon" href="@{@app.Value.CDN}/assets/img/favicon.ico" />
+    <link rel="shortcut icon" href="@{@_sysConfig.CDN}/assets/img/favicon.ico" />
     
-    <script src="@{@app.Value.CDN}/assets/libs/jquery/dist/jquery.js"></script> 
-    <script src="@{@app.Value.CDN}/assets/libs/fastadmin-layer/dist/layer.js"></script>
+    <script src="@{@_sysConfig.CDN}/assets/libs/jquery/dist/jquery.js"></script> 
+    <script src="@{@_sysConfig.CDN}/assets/libs/fastadmin-layer/dist/layer.js"></script>
     <style>
         * {-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;}
         html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,caption,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video {margin:0;padding:0;border:0;outline:0;vertical-align:baseline;background:transparent;}
@@ -59,7 +61,7 @@
 <body class="error-page-wrapper">
 <div class="content-container">
     <div class="head-line">
-        <img src="@{@app.Value.CDN}/assets/img/error.svg" alt="" width="120"/>
+        <img src="@{@_sysConfig.CDN}/assets/img/error.svg" alt="" width="120"/>
     </div>
     <div class="subheader">
         @Model.Msg
@@ -67,29 +69,29 @@
   @if (string.IsNullOrWhiteSpace(Model.Url) || !Model.Url.Contains("dialog")) 
      {   <div class="hr"></div>
         <div class="context">
-            <p>你可以返回重试</p>
+                <p>Return to retry</p>
         </div>
      }
     
     <div class="buttons-container">
-            @if (!string.IsNullOrWhiteSpace(Model.Url) && Model.Url.Contains("dialog")) @*弹窗*@
-            { 
-                <a class="btn btn-grey" id="close" href="javascript:;">关闭窗口</a>
-            }
-            else if (!string.IsNullOrWhiteSpace(Model.Url) && Model.Url.Contains("addtabs")) @*内嵌*@
+            @if (!string.IsNullOrWhiteSpace(Model.Url) && Model.Url.Contains("dialog")) 
             {
-                <a href="javascript:" onclick="history.go(-1)">返回上一页</a>
+                <a class="btn btn-grey" id="close" href="javascript:;">Close</a>
+            }
+            else if (!string.IsNullOrWhiteSpace(Model.Url) && Model.Url.Contains("addtabs")) 
+            {
+                <a href="javascript:" onclick="history.go(-1)">Back</a>
             }
             else
             {
-                @*<a href="/">返回主页</a> *@
-                <a href="javascript:" onclick="history.go(-1)">返回上一页</a>
+                @*<a href="/">home</a> *@
+                <a href="javascript:" onclick="history.go(-1)">Back</a>
             } 
         </div>
 </div>
     <script type="text/javascript">
         $('#close').on('click', function () {
-            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            var index = parent.layer.getFrameIndex(window.name); 
             parent.layer.close(index);
         }); 
     </script>

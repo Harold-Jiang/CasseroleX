@@ -1,157 +1,68 @@
-﻿using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace CasseroleX.Application.Utils;
 
 /// <summary>
-/// 属性的扩展方法 
+/// General Extension Method 
 /// </summary>
 public static class MethodExtensions
 {
     /// <summary>
-    /// 是否非空白字符
+    /// Is it a non whitespace character
     /// </summary>
     public static bool IsNotEmpty(this string? @this)
     {
         return @this != "";
     }
     /// <summary>
-    /// 是否非NULL或空白字符
+    /// Is it not a NULL or whitespace character
     /// </summary>
     public static bool IsNotNullOrEmpty([NotNullWhen(true)] this string? @this)
     {
         return !string.IsNullOrEmpty(@this);
     }
     /// <summary>
-    /// 是否非NULL或空白字符
+    /// Is it not a NULL or whitespace character
     /// </summary>
     public static bool IsNotNullOrWhiteSpace([NotNullWhen(true)] this string? value)
     {
         return !string.IsNullOrWhiteSpace(value);
     }
     /// <summary>
-    /// List是否是空或者无数据
+    /// Is the List empty or without data
     /// </summary>
-    public static bool IsNotNullOrZero<TSource>([NotNullWhen(true)] this IEnumerable<TSource>? source)
+    public static bool IsNotNullOrAny<TSource>([NotNullWhen(true)] this IEnumerable<TSource>? source)
     {
         return source != null && source.Any();
     }
 
     /// <summary>
-    /// 是否包含字符串
+    /// Does it contain a string
     /// </summary>
     public static bool Contains(this string @this, string value)
     {
         return @this.IndexOf(value) != -1;
     }
     /// <summary>
-    /// 是否包含特性
+    /// Does it include features
     /// </summary>
     public static bool Contains(this string @this, string value, StringComparison comparisonType)
     {
         return @this.IndexOf(value, comparisonType) != -1;
     }
+     
     /// <summary>
-    /// 是否相似
-    /// </summary>
-    public static bool IsLike(this string @this, string pattern)
-    {
-        string regexPattern = "^" + Regex.Escape(pattern) + "$";
-        regexPattern = regexPattern.Replace(@"\[!", "[^")
-            .Replace(@"\[", "[")
-            .Replace(@"\]", "]")
-            .Replace(@"\?", ".")
-            .Replace(@"\*", ".*")
-            .Replace(@"\#", @"\d");
-        return Regex.IsMatch(@this, regexPattern);
-    }
-    /// <summary>
-    /// 是否整数
+    /// Is it an integer
     /// </summary>
     public static bool IsNumeric(this string @this)
     {
         return !Regex.IsMatch(@this, "[^0-9]");
     }
-    /// <summary>
-    /// 是否日期
-    /// </summary>
-    public static bool IsValidDateTime(this object @this)
-    {
-        if (@this == null)
-        {
-            return true;
-        }
-
-        return DateTime.TryParse(@this.ToString(), out _);
-    }
-    /// <summary>
-    /// 是否Decimal
-    /// </summary>
-    public static bool IsValidDecimal(this object @this)
-    {
-        if (@this == null)
-        {
-            return true;
-        }
-
-        return decimal.TryParse(@this.ToString(), out _);
-    }
-    /// <summary>
-    /// 是否16位整数
-    /// </summary>
-    public static bool IsValidInt16(this object @this)
-    {
-        if (@this == null)
-        {
-            return true;
-        }
-
-        return short.TryParse(@this.ToString(), out _);
-    }
-    /// <summary>
-    /// 是否32位整数
-    /// </summary>
-    public static bool IsValidInt32(this object @this)
-    {
-        if (@this == null)
-        {
-            return true;
-        }
-
-        return int.TryParse(@this.ToString(), out _);
-    }
-    /// <summary>
-    /// 是否64位整数
-    /// </summary>
-    public static bool IsValidInt64(this object @this)
-    {
-        if (@this == null)
-        {
-            return true;
-        }
-
-        return long.TryParse(@this.ToString(), out _);
-    }
 
     /// <summary>
-    /// 是否不是数字
-    /// </summary>
-    public static Boolean IsNaN(this Double d)
-    {
-        return Double.IsNaN(d);
-    }
-    /// <summary>
-    /// 转换成金额
-    /// </summary>
-    public static Decimal ToMoney(this Decimal @this)
-    {
-        return Math.Round(@this, 2);
-    }
-
-    /// <summary>
-    /// 返回规范化属性名称
+    /// Returns the normalized attribute name
     /// </summary>
     public static string? GetPropertyName<T>(this string? @this)
     {
@@ -159,8 +70,7 @@ public static class MethodExtensions
         {
             return null;
         }
-        var propertyInfo = typeof(T).GetProperty(@this.Trim(), BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-        // 如果T中找到对应的属性
+        var propertyInfo = typeof(T).GetProperty(@this.Trim(), BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance); 
         if (propertyInfo != null)
         {
             return propertyInfo.Name;
@@ -170,7 +80,7 @@ public static class MethodExtensions
 
 
     /// <summary>
-    /// 返回排序字段名称逗号连接
+    /// Returns the comma concatenation of sorted field names
     /// </summary>
     public static string CreateSort<T>(this string? @this, string? orderby)
     {
@@ -179,14 +89,12 @@ public static class MethodExtensions
             return "-Id";
         }
         var sort = string.Empty;
-        //逗号来分隔字段字符串
+        
         var fieldsAfterSplit = @this.Split(',');
         foreach (var field in fieldsAfterSplit)
-        {
-            // 获得属性名称字符串
+        { 
             var propertyName = field.Trim();
-            var propertyInfo = typeof(T).GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            // 如果T中没找到对应的属性
+            var propertyInfo = typeof(T).GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance); 
             if (propertyInfo == null)
             {
                 continue;
@@ -197,43 +105,7 @@ public static class MethodExtensions
         return sort.IsNotNullOrEmpty() ? sort.TrimEnd(',') : "-Id";
     }
 
-    /// <summary>
-    /// Convert string to enumeration
-    /// </summary>
-    public static T ToEnum<T>(this string @this)
-    {
-        Type enumType = typeof(T);
-        return (T)Enum.Parse(enumType, @this, true);
-    }
-
-    /// <summary>
-    /// Convert the concatenated string of delimiters into a List
-    /// </summary>
-    /// <typeparam name="T">String or Int</typeparam>
-    /// <param name="this">string</param>
-    /// <param name="delimiters">delimiters default ","</param>
-    /// <returns></returns>
-    public static List<T> ToIList<T>(this string? @this,string delimiters = ",") 
-    {
-        if (!@this.IsNotNullOrWhiteSpace())
-        {
-            return new List<T>();
-        }
-        Type targetType = typeof(T);
-        var converter = TypeDescriptor.GetConverter(targetType);
-        try
-        {
-            var values = @this!.Split(new[] { delimiters }, StringSplitOptions.RemoveEmptyEntries)
-            .Select(x => (T)converter.ConvertTo(x.Trim(), targetType)!).ToList();
-            return values;
-        }
-        catch
-        {
-            return new List<T>();
-        }
-    }
-
-
+   
     /// <summary>
     /// Dynamically setting object properties and values
     /// </summary>
@@ -247,8 +119,8 @@ public static class MethodExtensions
 
         if (propertyInfo != null)
         {
-            //获取item.Name的真实类型
-            Type realType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? propertyInfo.PropertyType;  //返回指定可以为 null 的类型的基础类型参数
+            //Obtain the real type of itemName
+            Type realType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? propertyInfo.PropertyType;   
             if (propertyValue != null)
             {
                 propertyValue = Convert.ChangeType(propertyValue, realType);
@@ -266,24 +138,26 @@ public static class MethodExtensions
     }
 
     /// <summary>
-    /// Object to Dictionary
+    /// Encrypted String
     /// </summary>
-    /// <param name="obj">Object</param>
-    /// <param name="tolower">Is the attribute name lowercase</param>
+    /// <param name="nums"></param>
     /// <returns></returns>
-    public static Dictionary<string, object>? ObjectToDictionary(this object? obj,bool tolower = false)
+    public static string EncryptionNum(string nums)
     {
-        if (obj is null) return null;
-        Dictionary<string, object> dict = new();
-        Type type = obj.GetType();
-        PropertyInfo[] properties = type.GetProperties();
-        foreach (PropertyInfo property in properties)
+        if (nums.Length > 4)
         {
-            var value = property.GetValue(obj, null);
-            if (value is not  null )
-                dict.Add(tolower ? property.Name.ToLowerInvariant():property.Name, value);
+            string hideNum = nums.Substring(nums.Length / 4, (nums.Length * 3 / 4) - (nums.Length / 4) + 1);
+            string Asterisk = "";
+            for (int i = 0; i < hideNum.Length; i++)
+            {
+                Asterisk += "*";
+            }
+            nums = nums.Substring(0, nums.Length / 4) + Asterisk + nums.Substring((nums.Length * 3 / 4) + 1, nums.Length - (nums.Length * 3 / 4) - 1);
+            return nums;
         }
-        return dict;
+        else
+        {
+            return nums;
+        }
     }
-
 }

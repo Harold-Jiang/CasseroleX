@@ -3,7 +3,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'upload'], function (
     var Controller = {
         index: function () {
 
-            // 初始化表格参数配置
+            // Initialize Table Parameter Configuration
             Table.api.init({
                 search: true,
                 advancedSearch: true,
@@ -19,7 +19,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'upload'], function (
 
             var table = $("#table");
 
-            // 初始化表格
+            // Initialize Table
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 columns: [
@@ -34,7 +34,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'upload'], function (
                 commonSearch: false
             });
 
-            // 为表格绑定事件
+            // Bind events for tables
             Table.api.bindevent(table);//当内容渲染完成后
 
             // 给上传按钮添加上传成功事件

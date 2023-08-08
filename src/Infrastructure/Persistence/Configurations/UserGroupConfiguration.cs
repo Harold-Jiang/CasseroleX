@@ -27,7 +27,7 @@ public class UserGroupConfiguration : IEntityTypeConfiguration<UserGroup>
 
         b.Property(e => e.CreateTime)
           .HasComment("创建时间");
-        b.Property(e => e.LastModified)
+        b.Property(e => e.UpdateTime)
             .HasComment("更新时间");
          
     }

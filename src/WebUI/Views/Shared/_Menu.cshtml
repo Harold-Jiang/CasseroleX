@@ -1,8 +1,8 @@
-@model MenusDto
-@inject IOptionsSnapshot<AppOptions> app
-<!-- 左侧菜单栏 -->
+@model HomeMenuDto
+@inject IOptionsSnapshot<AppOptions> app 
+<!-- Left menu bar -->
 <section class="sidebar">
-    <!-- 管理员信息 -->
+    <!-- Administrator Information -->
     <div class="user-panel hidden-xs">
         <div class="pull-left image">
             <a asp-action="Profile" asp-controller="General" class="addtabsit"><img src="@User.Identity.GetAvatar()" class="img-circle" /></a>
@@ -13,10 +13,10 @@
         </div>
     </div>
 
-    <!-- 菜单搜索 -->
+    <!-- Menu Search -->
     <form action="" method="get" class="sidebar-form" onsubmit="return false;">
         <div class="input-group">
-            <input type="text" name="q" class="form-control" autocomplete="off" placeholder="搜索菜单">
+            <input type="text" name="q" class="form-control" autocomplete="off" placeholder="Menu Search">
             <span class="input-group-btn">
                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                 </button>
@@ -26,15 +26,15 @@
         </div>
     </form>
 
-    <!-- 移动端一级菜单 -->
+    <!-- Mobile Level 1 Menu -->
     <div class="mobilenav visible-xs">
 
     </div>
 
-    <!-- 左侧菜单栏 -->
+    <!-- Left menu bar -->
     <ul class="sidebar-menu @(app.Value.ShowSubMenu?"show-submenu":"") ">
 
-        <!-- 菜单可以在 后台管理->权限管理->菜单规则 中进行增删改排序 -->
+        <!-- The menu can be added, deleted, modified, and sorted in background management ->permission management -->
         @Html.Raw(Model.MenuList)
     </ul>
 </section>

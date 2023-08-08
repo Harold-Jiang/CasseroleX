@@ -224,7 +224,14 @@ public static class Tree
         foreach (var item in data)
         {
             var childlist = item.ChildList ?? new();
-            item.Name = $"{item.Spacer} {item.Name}";
+            if (field == "Name")
+            {
+                item.Name = $"{item.Spacer} {item.Name}";
+            }
+            else if (field == "Title")
+            {
+                item.Title = $"{item.Spacer} {item.Title}";
+            }
             item.HasChild = childlist is not null && childlist.Count > 0 ? 1 : 0;
             if (item.Id > 0)
                 arr.Add(item);

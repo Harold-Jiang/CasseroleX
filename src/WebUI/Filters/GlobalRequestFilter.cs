@@ -1,31 +1,39 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Security.Claims;
+using System.Text.RegularExpressions;
+using CasseroleX.Application.Common.Interfaces;
 using CasseroleX.Application.Configurations;
 using CasseroleX.Application.Utils;
+using CasseroleX.Domain.Entities;
+using CasseroleX.Infrastructure.OptionSetup;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
-using WebUI.OptionSetup;
+using WebUI.Helpers;
 
 namespace WebUI.Filters;
 
 public class GlobalRequestFilter : IAsyncActionFilter
 {
     private readonly ISiteConfigurationService _siteConfigurationService;
+    private readonly IApplicationDbContext _context;
     private readonly AppOptions _app;
 
     public GlobalRequestFilter(ISiteConfigurationService siteConfigurationService,
-        IOptionsSnapshot<AppOptions> app)
+        IOptionsSnapshot<AppOptions> app,
+        IApplicationDbContext context)
     {
-        _app = app.Value;
         _siteConfigurationService = siteConfigurationService;
+        _app = app.Value;
+        _context = context;
     }
     /// <summary>
-    /// 进入控制器前
+    /// Before entering the controller
     /// </summary>
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        // 非选项卡时重定向
+        // Redirect when not a tab
         if (CheckRequst(context))
         {
             string url = $"{context.HttpContext!.Request.Path}{context.HttpContext.Request.QueryString}";
@@ -40,7 +48,7 @@ public class GlobalRequestFilter : IAsyncActionFilter
             context.HttpContext.Session.SetString(HeaderNames.Referer, url);
             return;
         }
-        //生成Jsconfg
+        // Generate Jsconfg
         if (HttpMethods.IsGet(context.HttpContext.Request.Method))
         {
             if (context.Controller is Controller controller)
@@ -50,10 +58,35 @@ public class GlobalRequestFilter : IAsyncActionFilter
             }
         }
         await next();
+
+        //admin log
+        if (HttpMethods.IsPost(context.HttpContext.Request.Method))
+        {
+            var title = WebTools.GetControllerName(context.HttpContext);
+            if (title.IsNotNullOrEmpty())
+            {
+                var userName = context.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                if (userName != null)
+                {
+                    AdminLog model = new()
+                    {
+                        AdminId = int.Parse(context.HttpContext.User!.FindFirst(ClaimTypes.NameIdentifier)!.Value),
+                        UserName = userName,
+                        CreateTime = DateTime.Now,
+                        Ip = WebTools.GetIpAddress(context.HttpContext),
+                        UserAgent = context.HttpContext.Request.Headers["User-Agent"].ToString(),
+                        Url = context.HttpContext.Request.Path.ToString(),
+                        Title = $"{title}/{WebTools.GetActionName(context.HttpContext)}",
+                        Content = $"Parameter:{{Query:\"{context.HttpContext.Request.QueryString}\"}},{{From:{{{GetFromString(context.HttpContext.Request.Form)}}}}}"
+                    };
+                    await _context.AdminLogs.AddAsync(model);
+                    await _context.SaveChangesAsync();
+                }
+            }
+        }
     }
      
-    #region 方法
-    
+
     private static bool CheckRequst(ActionExecutingContext context)
     {
         return !HttpMethods.IsPost(context.HttpContext.Request.Method) &&
@@ -64,58 +97,49 @@ public class GlobalRequestFilter : IAsyncActionFilter
     }
     private async Task<Dictionary<string, object>> InitializeJsConfig(HttpContext context)
     {
-        var sysconfig = await _siteConfigurationService.GetConfiguration<SystemConfigInfo>();
-        var upload = await _siteConfigurationService.GetConfiguration<UploadConfigInfo>();
+        var sysconfig = await _siteConfigurationService.GetConfigurationAsync<SystemConfigInfo>();
+        var upload = await _siteConfigurationService.GetConfigurationAsync<UploadConfigInfo>();
 
-        var controllerName = GetControllerName(context).ToLowerInvariant();
-        var actionName = GetActionName(context);
+        var controllerName = WebTools.GetControllerName(context).ToLowerInvariant();
+        var actionName = WebTools.GetActionName(context).ToLowerInvariant();
+         
         Dictionary<string, object> jsConfig = new()
         {
-            { "site", new { name = sysconfig.AppName, version = _app.Version, cdnurl = _app.CDN,apiurl="", timezone = "Asia/Shanghai", languages = new { backend = "zh-cn", frontend = "zh-cn" } } },
+            { "site", new { name = sysconfig.Name, version = sysconfig.Version, cdnurl = sysconfig.CDN,apiurl="", timezone = sysconfig.Timezone, languages = new { backend = sysconfig.Language } } },
             { "upload", upload },
             { "modulename", "admin" },
             { "controllername", controllerName.Replace("/", ".") },
             { "actionname", actionName },
-            { "jsname", "backend/" + (controllerName.Contains("account") ? "account" : controllerName) },
+            { "jsname", $"backend/{controllerName}" },
             { "moduleurl", "" },
-            { "language", "zh-cn" },
-            { "referer", GetCustomReferrer(context)??"" },
-            { "__PUBLIC__", _app.PUBLIC },
-            { "__ROOT__", _app.ROOT },
-            { "__CDN__", _app.CDN },
-            { "cookie", new { prefix = _app.Prefix } }
+            { "language", sysconfig.Language },
+            { "referer", WebTools.GetCustomReferrer(context)??"" },
+            { "__PUBLIC__", sysconfig.PUBLIC },
+            { "__ROOT__", "" },
+            { "__CDN__", sysconfig.CDN },
+            { "cookie", new { prefix = sysconfig.Prefix } }
         };
         return jsConfig;
     }
 
     /// <summary>
-    /// 获取Controller Name
+    /// get parameter
     /// </summary> 
-    private static string GetControllerName(HttpContext context)
+    private static string GetFromString(IFormCollection Form)
     {
-        var routeAttribute = context!.GetEndpoint()?.Metadata.OfType<RouteAttribute>().SingleOrDefault();
-        string? controllerName;
-        if (routeAttribute != null)
-            controllerName = routeAttribute.Template;
-        else
-            controllerName = context!.Request.RouteValues["controller"]?.ToString()?.ToLower();
-        return controllerName ?? "";
-    } 
-    /// <summary>
-    /// 获取ActionName
-    /// </summary> 
-    private static string GetActionName(HttpContext context)
-    {
-        return context.Request.RouteValues == null ? "" :
-            context.Request.RouteValues["action"]?.ToString()?.ToLower() ?? "";
+        string req = String.Empty;
+        foreach (var item in Form.Keys)
+        {
+            req += "," + item;
+            if (!StringValues.IsNullOrEmpty(Form[item]) && item.preg_match(@"(password|salt|token|__RequestVerificationToken)"))
+            {
+                req += ":***";
+            }
+            else
+            {
+                req += $":\"{Form[item]}\"";
+            }
+        }
+        return req.TrimStart(',');
     }
-
-    /// <summary>
-    /// 获取Session自定义 referrer
-    /// </summary>
-    private static string? GetCustomReferrer(HttpContext context)
-    {
-        return context!.Session.GetString(HeaderNames.Referer);
-    }
-    #endregion
 }
