@@ -8,7 +8,7 @@ CasseroleX 是一个使用.net 7清洁架构开发的基于权限管理的后端
  
 </div>
 
-[![](https://github.com/Harold-Jiang/CasseroleX/blob/master/template.png)](https://github.com/Harold-Jiang/CasseroleX/blob/master/template.png)
+[![](template.png)](template.png)
 
 English | [简体中文](README-zh_CN.md)
 
