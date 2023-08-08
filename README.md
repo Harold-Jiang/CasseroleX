@@ -8,7 +8,7 @@ CasseroleX is a backend development framework based on permission management.
  
 </div>
 
-[![](https://github.com/Harold-Jiang/CasseroleX/blob/master/template.png)](https://github.com/Harold-Jiang/CasseroleX/blob/master/template.png)
+[![](template.png)](template.png)
 
 
 English | [简体中文](README-zh_CN.md)
