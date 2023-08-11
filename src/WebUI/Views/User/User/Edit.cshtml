@@ -5,7 +5,7 @@
     <div class="form-group">
         <label for="c-group_id" class="control-label col-xs-12 col-sm-2">Group:</label>
         <div class="col-xs-12 col-sm-4">
-            @await Component.InvokeAsync("GetUserGroupsSelect",new { dic = new Dictionary<string,string>{ { "name","pid"}, {"data-group_id", Model.GroupId.ToString() }}, selected = Model.GroupId})
+            @await Component.InvokeAsync("GetUserGroupsSelect",new { dic = new Dictionary<string,string>{ { "name","pid"}, {"data-group_id", Model.GroupId.ToString() }}, selected = Model.GroupId.ToString()})
         </div>
     </div>
     <div class="form-group">
@@ -42,7 +42,7 @@
         <label for="c-avatar" class="control-label col-xs-12 col-sm-2">Avatar:</label>
         <div class="col-xs-12 col-sm-8">
             <div class="input-group">
-                <input id="c-avatar" data-rule="" class="form-control" size="50" name="avatar]" type="text" value="@Model.Avatar}">
+                <input id="c-avatar" data-rule="" class="form-control" size="50" name="avatar" type="text" value="@Model.Avatar">
                 <div class="input-group-addon no-border no-padding">
                     <span><button type="button" id="faupload-avatar" class="btn btn-danger faupload" data-input-id="c-avatar" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="false" data-preview-id="p-avatar"><i class="fa fa-upload"></i> Upload</button></span>
                     <span><button type="button" id="fachoose-avatar" class="btn btn-primary fachoose" data-input-id="c-avatar" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> Choose</button></span>
