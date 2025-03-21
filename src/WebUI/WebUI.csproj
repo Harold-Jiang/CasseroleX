@@ -12,10 +12,43 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="wwwroot\assets\libs\art-template\demo\**" />
+      <Compile Remove="wwwroot\assets\libs\art-template\doc\**" />
+      <Compile Remove="wwwroot\assets\libs\art-template\loader\**" />
+      <Compile Remove="wwwroot\assets\libs\art-template\node\**" />
+      <Compile Remove="wwwroot\assets\libs\art-template\src\**" />
+      <Compile Remove="wwwroot\assets\libs\art-template\test\**" />
       <Compile Remove="wwwroot\uploads\**" />
+      <Content Remove="wwwroot\assets\libs\art-template\demo\**" />
+      <Content Remove="wwwroot\assets\libs\art-template\doc\**" />
+      <Content Remove="wwwroot\assets\libs\art-template\loader\**" />
+      <Content Remove="wwwroot\assets\libs\art-template\node\**" />
+      <Content Remove="wwwroot\assets\libs\art-template\src\**" />
+      <Content Remove="wwwroot\assets\libs\art-template\test\**" />
       <Content Remove="wwwroot\uploads\**" />
+      <EmbeddedResource Remove="wwwroot\assets\libs\art-template\demo\**" />
+      <EmbeddedResource Remove="wwwroot\assets\libs\art-template\doc\**" />
+      <EmbeddedResource Remove="wwwroot\assets\libs\art-template\loader\**" />
+      <EmbeddedResource Remove="wwwroot\assets\libs\art-template\node\**" />
+      <EmbeddedResource Remove="wwwroot\assets\libs\art-template\src\**" />
+      <EmbeddedResource Remove="wwwroot\assets\libs\art-template\test\**" />
       <EmbeddedResource Remove="wwwroot\uploads\**" />
+      <None Remove="wwwroot\assets\libs\art-template\demo\**" />
+      <None Remove="wwwroot\assets\libs\art-template\doc\**" />
+      <None Remove="wwwroot\assets\libs\art-template\loader\**" />
+      <None Remove="wwwroot\assets\libs\art-template\node\**" />
+      <None Remove="wwwroot\assets\libs\art-template\src\**" />
+      <None Remove="wwwroot\assets\libs\art-template\test\**" />
       <None Remove="wwwroot\uploads\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="wwwroot\assets\libs\art-template\.bower.json" />
+      <Content Remove="wwwroot\assets\libs\art-template\.gitignore" />
+      <Content Remove="wwwroot\assets\libs\art-template\.npmignore" />
+      <Content Remove="wwwroot\assets\libs\art-template\Gruntfile.js" />
+      <Content Remove="wwwroot\assets\libs\art-template\package.json" />
+      <Content Remove="wwwroot\assets\libs\art-template\README.md" />
     </ItemGroup>
 
 
