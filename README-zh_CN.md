@@ -10,7 +10,7 @@ CasseroleX 是一个使用.net 9清洁架构开发的基于权限管理的后端
 
 [![](template.png)](template.png)
 
-English | [简体中文](README-zh_CN.md)
+[English](README.md) | 简体中文
 
 
 ## ✨ Features
