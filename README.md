@@ -4,7 +4,7 @@ CasseroleX
 
 <div align="center">
 
-CasseroleX is a backend development framework based on permission management.
+CasseroleX is a backend development framework built on net9 technology, centered around permission management.
  
 </div>
 
@@ -27,7 +27,7 @@ English | [简体中文](README-zh_CN.md)
 
 ## 🎉 Technologies
 
-- [ASP.NET Core 7](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core)
+- [ASP.NET Core 9](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core)
 - [Entity Framework Core 7](https://docs.microsoft.com/en-us/ef/core/)
 - [MediatR](https://github.com/jbogard/MediatR)
 - [AutoMapper](https://automapper.org/)

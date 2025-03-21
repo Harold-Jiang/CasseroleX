@@ -4,7 +4,7 @@ CasseroleX
 
 <div align="center">
 
-CasseroleX 是一个使用.net 7清洁架构开发的基于权限管理的后端开发框架.
+CasseroleX 是一个使用.net 9清洁架构开发的基于权限管理的后端开发框架.
  
 </div>
 
@@ -26,7 +26,7 @@ English | [简体中文](README-zh_CN.md)
 
 ## 🎉 Technologies
 
-- [ASP.NET Core 7](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core)
+- [ASP.NET Core 9](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core)
 - [Entity Framework Core 7](https://docs.microsoft.com/en-us/ef/core/)
 - [MediatR](https://github.com/jbogard/MediatR)
 - [AutoMapper](https://automapper.org/)

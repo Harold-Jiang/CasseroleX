@@ -28,10 +28,10 @@ public class DeleteAdminLogCommandHandler : IRequestHandler<DeleteAdminLogComman
         if (!idList.IsNotNullOrAny())
             return Result.Success();
 
-       var count = await _context.AdminLogs
+        var count = await _context.AdminLogs
                     .Where(x => idList.Contains(x.Id))
                     .ExecuteDeleteAsync(cancellationToken);
-         
+
         return count > 0 ? Result.Success() : Result.Failure();
 
     }

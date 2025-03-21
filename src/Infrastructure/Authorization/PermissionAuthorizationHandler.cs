@@ -29,14 +29,14 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<OperationAuth
         {
             return;
         }
-        using var scope =  _serviceScopeFactory.CreateScope();
+        using var scope = _serviceScopeFactory.CreateScope();
         IRoleManager roleManager = scope.ServiceProvider.GetRequiredService<IRoleManager>();
 
         HashSet<string> permissions = await roleManager.GetPermissionsAsync(userId);
 
         if (requirement.Name == "none" && _httpContextAccessor.HttpContext != null)
-        { 
-            var endpoint = _httpContextAccessor.HttpContext.GetEndpoint(); 
+        {
+            var endpoint = _httpContextAccessor.HttpContext.GetEndpoint();
             if (endpoint is RouteEndpoint routeEndpoint)
             {
                 var routeAttribute = routeEndpoint.Metadata.OfType<RouteAttribute>().SingleOrDefault();
@@ -45,7 +45,7 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<OperationAuth
                 {
                     requirement.Name = $"{routeAttribute.Template}/{actionValue?.ToString()}";
                 }
-            } 
+            }
         }
 
         if (permissions.Contains(requirement.Name.ToLowerInvariant()))

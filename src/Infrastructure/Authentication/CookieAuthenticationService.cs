@@ -14,7 +14,7 @@ namespace CasseroleX.Infrastructure.Authentication;
 /// Represents service using cookie middleware for the authentication
 /// </summary>
 public class CookieAuthenticationService : ICustomAuthenticationService
-{ 
+{
     private readonly SecurityOptions _securityConfig;
     private readonly IUserManager _userManager;
     private readonly IRoleManager _roleManager;
@@ -79,15 +79,15 @@ public class CookieAuthenticationService : ICustomAuthenticationService
             claims.Add(new Claim(ClaimTypes.Hash, user.Token, ClaimValueTypes.String, _securityConfig.CookieClaimsIssuer));
 
         //add permissionIds 
-        var (permissions,roleIds)= await _roleManager.GetRolePermissionIdsAsync(user.Id);
-        claims.Add(new Claim(AuthExtensions.RolePermissonIds,string.Join(",", permissions), ClaimValueTypes.String, _securityConfig.CookieClaimsIssuer));
+        var (permissions, roleIds) = await _roleManager.GetRolePermissionIdsAsync(user.Id);
+        claims.Add(new Claim(AuthExtensions.RolePermissonIds, string.Join(",", permissions), ClaimValueTypes.String, _securityConfig.CookieClaimsIssuer));
 
         //add roleIds
         claims.Add(new Claim(ClaimTypes.Role, string.Join(",", roleIds), ClaimValueTypes.String, _securityConfig.CookieClaimsIssuer));
 
 
         //add Avatar
-        claims.Add(new Claim(AuthExtensions.Avatar,user.Avatar??"", ClaimValueTypes.String, _securityConfig.CookieClaimsIssuer));
+        claims.Add(new Claim(AuthExtensions.Avatar, user.Avatar ?? "", ClaimValueTypes.String, _securityConfig.CookieClaimsIssuer));
 
         //add Logintime
         claims.Add(new Claim(AuthExtensions.LoginTime, user.LoginTime.ToDateTimeString(true), ClaimValueTypes.String, _securityConfig.CookieClaimsIssuer));
@@ -126,9 +126,9 @@ public class CookieAuthenticationService : ICustomAuthenticationService
         if (_httpContextAccessor.HttpContext != null)
         {
             await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults
-                .AuthenticationScheme); 
+                .AuthenticationScheme);
         }
-    } 
+    }
 
     /// <summary>
     /// Get an authenticated user

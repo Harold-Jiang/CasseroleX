@@ -44,7 +44,7 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
             if (entry.State == EntityState.Added)
             {
                 entry.Entity.CreatedBy = (_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier)).ToInt();
-                entry.Entity.CreateTime  = _dateTime.Now;
+                entry.Entity.CreateTime = _dateTime.Now;
             }
 
             if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())

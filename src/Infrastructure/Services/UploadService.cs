@@ -22,24 +22,24 @@ public class UploadService : IUploadService
     private readonly IApplicationDbContext _context;
     private readonly AppOptions _app;
     private readonly SystemConfigInfo _systemConfig;
-    private readonly IWebHostEnvironment _webHostEnvironment;
+    private readonly IHostingEnvironment _webHostEnvironment;
 
     public UploadService(ISiteConfigurationService siteConfigurationService,
         IApplicationDbContext context,
         IOptions<AppOptions> app,
         IHttpContextAccessor httpContextAccessor,
-        IWebHostEnvironment webHostEnvironment)
+        IHostingEnvironment webHostEnvironment)
     {
         _siteConfigurationService = siteConfigurationService;
         _context = context;
         _app = app.Value;
         _httpContextAccessor = httpContextAccessor;
         _webHostEnvironment = webHostEnvironment;
-        _systemConfig =  _siteConfigurationService.GetConfigurationAsync<SystemConfigInfo>().GetAwaiter().GetResult();
+        _systemConfig = _siteConfigurationService.GetConfigurationAsync<SystemConfigInfo>().GetAwaiter().GetResult();
 
     }
 
-  
+
 
     /// <summary>
     /// upload file
@@ -67,7 +67,7 @@ public class UploadService : IUploadService
             throw new IOException($"Uploading files of type {fileExt} is not allowed");
         //Check if the file size is legal
         if (!CheckFileSize(formFile.Length, _upload))
-            throw new IOException($"The file exceeds the limit and is limited in size to {_upload. MaxSize} bytes");
+            throw new IOException($"The file exceeds the limit and is limited in size to {_upload.MaxSize} bytes");
         #endregion
 
         #region MimeType
@@ -119,7 +119,7 @@ public class UploadService : IUploadService
         var attachment = await _context.Attachments.FirstOrDefaultAsync(x => x.Sha1 == sha1);
         if (attachment is not null)
         {
-            return attachment; 
+            return attachment;
         }
 
         //File name processing
@@ -169,10 +169,10 @@ public class UploadService : IUploadService
 
     public void DeleteFile(string path)
     {
-        var fullPath =  Path.GetFullPath(path.StartsWith("/") ? path[1..]:path, _webHostEnvironment.WebRootPath);
+        var fullPath = Path.GetFullPath(path.StartsWith("/") ? path[1..] : path, _webHostEnvironment.WebRootPath);
         if (File.Exists(fullPath))
         {
-            File.Delete(fullPath); 
+            File.Delete(fullPath);
         }
     }
 
@@ -223,7 +223,7 @@ public class UploadService : IUploadService
         {
             saveKey = $"{DateTime.Now:yyyyMMddHHmmss}{RandomProvider.Number(16)}";
         }
-        
+
         if (saveKey.StartsWith("/"))
         {
             return saveKey[1..];
